@@ -1,0 +1,120 @@
+{
+  "configuration" : {
+    "scope" : "Landscape"
+  },
+  "description" : "Architecture documentation and C4 model.",
+  "documentation" : {
+    "decisions" : [ {
+      "content" : "# 1. Use Structurizr DSL and ADD 3.0 for architecture docs\n\n## Status\n\nAccepted\n\n## Context\n\nWe need a single source of truth for architecture and decisions in the repo.\n\n## Decision\n\nWe use Structurizr DSL (C4) with !docs and !adrs, and follow ADD 3.0 for design steps.\n\n## Consequences\n\n- Diagrams and docs live in the repo; Structurizr vNext (local/export) for viewing.\n- ADRs in MADR format for compatibility with Structurizr importers.\n",
+      "date" : "2026-02-22T09:37:29Z",
+      "format" : "Markdown",
+      "id" : "1",
+      "status" : "accepted",
+      "title" : "1. Use Structurizr DSL and ADD 3.0 for architecture docs"
+    } ],
+    "sections" : [ {
+      "content" : "# Architecture overview\n\n(To be filled during ADD 3.0 iterations.)\n\n## Drivers\n\n- **Functional:** —\n- **Quality attributes:** —\n- **Constraints:** —\n",
+      "filename" : "00-overview.md",
+      "format" : "Markdown",
+      "order" : 1,
+      "title" : ""
+    } ]
+  },
+  "id" : 1,
+  "lastModifiedDate" : "2026-02-23T06:02:30Z",
+  "model" : {
+    "people" : [ {
+      "description" : "End user",
+      "id" : "1",
+      "name" : "User",
+      "properties" : {
+        "structurizr.dsl.identifier" : "user"
+      },
+      "relationships" : [ {
+        "description" : "Uses",
+        "destinationId" : "2",
+        "id" : "3",
+        "sourceId" : "1",
+        "tags" : "Relationship",
+        "technology" : "Web Browser"
+      } ],
+      "tags" : "Element,Person"
+    } ],
+    "softwareSystems" : [ {
+      "description" : "Placeholder; refine in ADD iterations.",
+      "documentation" : { },
+      "id" : "2",
+      "name" : "Main System",
+      "properties" : {
+        "structurizr.dsl.identifier" : "main"
+      },
+      "tags" : "Element,Software System"
+    } ]
+  },
+  "name" : "add-ai",
+  "properties" : {
+    "structurizr.inspection.error" : "0",
+    "structurizr.inspection.info" : "0",
+    "structurizr.inspection.ignore" : "0",
+    "structurizr.inspection.warning" : "0"
+  },
+  "views" : {
+    "configuration" : {
+      "styles" : { },
+      "terminology" : { }
+    },
+    "systemContextViews" : [ {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "description" : "System context for Main System.",
+      "elements" : [ {
+        "id" : "1",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "2",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "enterpriseBoundaryVisible" : true,
+      "key" : "SystemContext",
+      "name" : "System Context View: Main System",
+      "order" : 2,
+      "relationships" : [ {
+        "id" : "3"
+      } ],
+      "softwareSystemId" : "2"
+    } ],
+    "systemLandscapeViews" : [ {
+      "automaticLayout" : {
+        "edgeSeparation" : 50,
+        "nodeSeparation" : 50,
+        "rankDirection" : "LeftRight",
+        "rankSeparation" : 100,
+        "vertices" : true
+      },
+      "description" : "Default landscape view.",
+      "elements" : [ {
+        "id" : "1",
+        "x" : 0,
+        "y" : 0
+      }, {
+        "id" : "2",
+        "x" : 0,
+        "y" : 0
+      } ],
+      "enterpriseBoundaryVisible" : true,
+      "key" : "SystemLandscape",
+      "name" : "System Landscape View",
+      "order" : 1,
+      "relationships" : [ {
+        "id" : "3"
+      } ]
+    } ]
+  }
+}
