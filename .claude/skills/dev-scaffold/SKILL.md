@@ -19,7 +19,7 @@ Generates a NestJS module following hexagonal architecture (ports & adapters) an
 For a module named `{name}`:
 
 ```
-packages/dss-api/src/
+{base-path}/
   core/domain/{name}/
     {name}.entity.ts              # Aggregate root entity
     {name}.value-objects.ts       # Value objects
@@ -51,10 +51,13 @@ packages/dss-api/src/
     {name}.module.ts              # NestJS module definition
 ```
 
+> `{base-path}` is the project's source root (e.g., `src/`, `packages/api/src/`). The skill auto-detects it by looking for `tsconfig.json`, `nest-cli.json`, or `package.json` with a NestJS dependency. If multiple candidates exist, the user is asked to choose.
+
 ## Process
-1. Ask for module name (if not provided)
-2. Ask for key entity properties
-3. Ask for main use cases
-4. Generate all files with proper imports and structure
-5. Register module in `app.module.ts`
-6. Suggest running `/dev-test` to generate tests
+1. **Detect project source root** - scan for NestJS project markers, ask user to confirm or specify the base path
+2. Ask for module name (if not provided)
+3. Ask for key entity properties
+4. Ask for main use cases
+5. Generate all files with proper imports and structure
+6. Register module in `app.module.ts`
+7. Suggest running `/dev-test` to generate tests

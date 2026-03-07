@@ -30,7 +30,7 @@ Generates test files following TDD principles - tests first, then guide implemen
 
 ## Test Structure
 ```
-packages/dss-api/test/
+{test-path}/
   unit/
     core/domain/{name}/
       {name}.entity.spec.ts
@@ -42,6 +42,8 @@ packages/dss-api/test/
       {name}.repository.spec.ts
       {name}.controller.spec.ts
 ```
+
+> `{test-path}` is the project's test directory. The skill auto-detects it by checking Jest/Vitest config, `package.json` test settings, or common conventions (`test/`, `tests/`, `__tests__/`, `src/**/*.spec.ts`). If ambiguous, the user is asked to confirm.
 
 ## Process
 1. Read the module's domain entities and use cases
