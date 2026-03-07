@@ -1,8 +1,3 @@
----
-description: NestJS hexagonal architecture and DDD patterns
-globs: src/**,packages/**/src/**
----
-
 # NestJS Patterns
 
 ## Hexagonal Architecture Layers

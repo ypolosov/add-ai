@@ -1,8 +1,3 @@
----
-description: MADR v3 format for Architecture Decision Records
-globs: docs/architecture/adrs/**
----
-
 # ADR Format (MADR v3)
 
 ## File Naming

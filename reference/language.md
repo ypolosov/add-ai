@@ -1,8 +1,3 @@
----
-description: Language policy for all interactions and artifacts
-globs: **/*
----
-
 # Language Policy
 
 ## Interaction Language: Russian

@@ -11,7 +11,6 @@ Claude Code plugin providing 4 agents and 16 skills for architecture-driven deve
 agents/                      # 4 role-based agents
 skills/                      # 16 skills (slash commands)
 reference/                   # Convention docs (not auto-loaded, for human/agent reference)
-settings.json                # Plugin settings
 ```
 
 ## Agents

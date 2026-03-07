@@ -1,8 +1,3 @@
----
-description: Architecture documentation conventions and ID formats
-globs: docs/architecture/**
----
-
 # Architecture Conventions
 
 ## ID Formats

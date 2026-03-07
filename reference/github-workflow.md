@@ -1,8 +1,3 @@
----
-description: GitHub workflow conventions - issues, PRs, labels
-globs: .github/**
----
-
 # GitHub Workflow Conventions
 
 ## Labels

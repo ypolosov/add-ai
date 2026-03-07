@@ -1,13 +1,9 @@
----
-description: "EXAMPLE target project context - customize this file for your target project"
----
-
 <!--
-  This is an EXAMPLE target project context file.
-  When using the ADD-AI toolkit in a new project:
-  1. Replace the content below with your project's context
-  2. Optionally add `globs: **/*` to the frontmatter to auto-load this rule
-  3. Update tech stack, architecture approach, and quality attributes
+  EXAMPLE target project context file.
+  To use in your project:
+  1. Copy this to your project's .claude/rules/ directory
+  2. Replace the content with your project's context
+  3. Add frontmatter with globs: **/* to auto-load
 -->
 
 # Target Project Context (Example: GT Platform)

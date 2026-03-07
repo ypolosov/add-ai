@@ -1,8 +1,3 @@
----
-description: LikeC4 DSL conventions for C4 architecture diagrams
-globs: docs/architecture/c4/**
----
-
 # LikeC4 Conventions
 
 ## File Structure

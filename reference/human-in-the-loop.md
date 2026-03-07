@@ -1,8 +1,3 @@
----
-description: Human-in-the-loop decision making principle
-globs: **/*
----
-
 # Human-in-the-Loop
 
 ## Core Principle
