@@ -29,7 +29,7 @@ Creates and updates C4 architecture diagrams using LikeC4 DSL.
    - New relationship?
    - Update existing element?
 
-3. Apply changes following LikeC4 DSL syntax (see `.claude/rules/likec4.md`)
+3. Apply changes following LikeC4 DSL syntax (see `likec4-reference.md` in this skill directory)
 
 4. Suggest running `npx likec4 serve` to preview
 

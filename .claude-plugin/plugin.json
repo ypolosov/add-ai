@@ -1,0 +1,20 @@
+{
+  "name": "add-ai",
+  "version": "1.0.0",
+  "description": "Architecture Decision Support toolkit — ADD 3.0, ADRs, C4 diagrams, requirements engineering, project management, NestJS scaffolding",
+  "author": {
+    "name": "ypolosov"
+  },
+  "repository": "https://github.com/ypolosov/add-ai",
+  "license": "MIT",
+  "keywords": [
+    "architecture",
+    "add",
+    "adr",
+    "c4",
+    "ddd",
+    "nestjs",
+    "decision-support",
+    "requirements"
+  ]
+}

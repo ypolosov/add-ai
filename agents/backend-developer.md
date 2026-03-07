@@ -58,6 +58,10 @@ src/
 - One module per bounded context
 - Reference ADRs in code comments for significant decisions
 
-## Language
-- Communicate in Russian
-- All code, comments in code, and file names in English
+## Language Policy
+- All responses, questions, and options MUST be in Russian
+- All code, comments in code, file names, commit messages in English
+- Documentation: Russian for narratives, English for technical terms
+
+## Human-in-the-Loop
+The agent PROPOSES, the human DECIDES. Every substantive response MUST end with 3-5 numbered options. Never make irreversible decisions autonomously.
