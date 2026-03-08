@@ -1,6 +1,6 @@
 {
   "name": "add-ai",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Architecture Decision Support toolkit — ADD 3.0, ADRs, C4 diagrams, requirements engineering, project management, full-stack code generation, CI/CD, testing, code review",
   "author": {
     "name": "ypolosov"

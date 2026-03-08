@@ -1,6 +1,6 @@
 # ADD-AI: Architecture Decision Support Plugin for Claude Code
 
-A Claude Code plugin that adds structured architecture and development workflows to any project. Implements ADD 3.0 (Attribute-Driven Design) methodology with 8 specialized agents and 29 skills.
+A Claude Code plugin that adds structured architecture and development workflows to any project. Implements ADD 3.0 (Attribute-Driven Design) methodology with 8 specialized agents and 30 skills.
 
 ## Features
 
@@ -34,6 +34,7 @@ After installation, skills are available as `/add-ai:<skill>`:
 
 ```
 /add-ai:sa-init          # Initialize architecture docs
+/add-ai:sa-resume        # Resume ADD 3.0 session
 /add-ai:sa-iterate       # Run ADD 3.0 iteration
 /add-ai:ba-requirements  # Requirements elicitation
 /add-ai:ba-mtw           # Mission Thread Workshop

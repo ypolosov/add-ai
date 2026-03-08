@@ -1,6 +1,6 @@
 # LikeC4 DSL Quick Reference
 
-## Specification (element & relation kinds)
+## Specification (element, relation & deployment node kinds)
 
 ```likec4
 specification {
@@ -52,6 +52,19 @@ specification {
       line solid
       color blue
     }
+  }
+
+  deploymentNode environment
+  deploymentNode zone
+  deploymentNode kubernetes {
+    style {
+      color blue
+      icon tech:kubernetes
+    }
+  }
+  deploymentNode vm {
+    notation 'Virtual Machine'
+    technology 'VMware'
   }
 }
 ```
@@ -111,6 +124,77 @@ views {
     title "API Gateway - Components"
     include *
   }
+}
+```
+
+## Deployment Model
+
+```likec4
+deployment {
+  environment prod 'Production' {
+    zone eu 'EU Region' {
+      zone zone1 {
+        instanceOf gtPlatform.webApp
+        instanceOf gtPlatform.apiGateway
+      }
+      zone zone2 {
+        web = instanceOf gtPlatform.webApp
+        api1 = instanceOf gtPlatform.apiGateway
+        api2 = instanceOf gtPlatform.apiGateway
+      }
+      db = instanceOf gtPlatform.database
+    }
+
+    // Deployment relationships
+    vm vm1 {
+      db = instanceOf gtPlatform.database 'Primary DB'
+    }
+    vm vm2 {
+      db = instanceOf gtPlatform.database 'Standby DB'
+    }
+    vm2.db -> vm1.db 'replicates'
+  }
+}
+```
+
+## Deployment Views
+
+```likec4
+deployment view prodDeployment {
+  title 'Production Deployment'
+  include prod.**
+  include * -> *
+}
+```
+
+## Dynamic Views
+
+```likec4
+dynamic view userLogin {
+  title 'User Login Flow'
+
+  customer -> web 'opens in browser'
+  web -> auth 'updates bearer token if needed'
+  web -> api 'POST request'
+  api -> auth  // title derived from model
+  api -> api 'process request'  // self-call
+  web <- api 'returns JSON'  // reverse direction
+
+  // Include non-participating elements for context
+  include cloud, ui, backend
+
+  style cloud {
+    color muted
+    opacity 0%
+  }
+}
+
+// Continuous steps syntax (chaining)
+dynamic view shortForm {
+  customer
+    -> web
+    -> api  // same as web -> api
+    -> web  // same as web <- api
 }
 ```
 

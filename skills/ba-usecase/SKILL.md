@@ -55,6 +55,10 @@ Creates and manages use case specifications in a structured format.
 ## Postconditions
 - {condition}
 
+## Architectural Significance
+- **Architecturally Significant:** Yes/No
+- **Reason:** {drives QA-NNN / cross-cutting concern / technically complex / high risk}
+
 ## Quality Attributes
 - Related: QA-NNN, QA-NNN
 

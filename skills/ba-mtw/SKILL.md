@@ -7,6 +7,9 @@ agent: business-analyst
 
 # /ba-mtw - Mission Thread Workshop
 
+> **Note:** Mission Thread Workshop is an extension beyond the ADD 3.0 book process.
+> Recommended for systems-of-systems, mission-critical, or multi-organization contexts.
+
 ## What this skill does
 Facilitates a Mission Thread Workshop (MTW) to generate end-to-end mission thread scenarios that cross multiple system components and quality attributes.
 

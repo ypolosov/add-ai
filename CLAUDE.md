@@ -2,14 +2,14 @@
 
 ## Overview
 
-Claude Code plugin providing 8 agents and 29 skills for architecture-driven development using ADD 3.0 methodology.
+Claude Code plugin providing 8 agents and 30 skills for architecture-driven development using ADD 3.0 methodology.
 
 ## Plugin Structure
 
 ```
 .claude-plugin/plugin.json   # Plugin manifest
 agents/                      # 8 role-based agents
-skills/                      # 29 skills (slash commands)
+skills/                      # 30 skills (slash commands)
 reference/                   # Convention docs (not auto-loaded, for human/agent reference)
 ```
 
@@ -28,7 +28,7 @@ reference/                   # Convention docs (not auto-loaded, for human/agent
 
 | Role | Skills |
 |------|--------|
-| SA | `sa-init`, `sa-iterate`, `sa-adr`, `sa-diagram`, `sa-review`, `sa-kanban` |
+| SA | `sa-init`, `sa-iterate`, `sa-adr`, `sa-diagram`, `sa-review`, `sa-kanban`, `sa-resume` |
 | BA | `ba-requirements`, `ba-qaw`, `ba-utility-tree`, `ba-usecase`, `ba-mtw` |
 | PM | `pm-plan`, `pm-issue`, `pm-status` |
 | Backend Dev | `dev-scaffold`, `dev-implement` |

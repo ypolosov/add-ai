@@ -1,5 +1,23 @@
 # ADD 3.0 Design Concepts Reference
 
+## Reference Architectures
+
+### Application Types
+- **Web/API Application** — 3-tier: presentation, business logic, data access
+- **Mobile Application** — thin client + API backend, offline-first considerations
+- **Rich Client** — desktop app with local storage and server sync
+- **Service-Oriented / Event-Driven** — distributed services with message bus
+- **Data-Intensive** — ETL pipelines, data lakes, analytics platforms
+- **Embedded / Real-Time** — constrained resources, timing guarantees
+
+### Deployment Patterns
+- **Single Node** — all components on one server
+- **Load-Balanced Cluster** — N replicas behind load balancer
+- **Primary-Secondary** — one primary, N secondaries for reads/failover
+- **Active-Active** — all nodes handle traffic, shared state
+- **Blue/Green** — two identical environments, traffic switch
+- **Canary** — gradual rollout to subset of users
+
 ## Architecture Patterns
 
 ### Structural Patterns
@@ -48,3 +66,29 @@
 - **Vertical Scaling**: Resource Upgrade
 - **Caching**: In-Memory Cache, Distributed Cache, CDN
 - **Async Processing**: Message Queue, Background Workers
+
+## Testability Tactics
+- **Controllability**: Specialized Testing Interfaces, Record/Playback, Abstract Data Sources, Sandbox
+- **Observability**: Record/Log, Localize State Storage, Specialized Monitoring, Executable Assertions
+- **Limit Complexity**: Limit Structural Complexity, Limit Nondeterminism
+
+## Deployability Tactics
+- **Manage Deployment Pipeline**: Script Deployment Commands, Rollback, Manage Versioning
+- **Manage Deployed System**: Blue/Green Deployment, Canary Release, Feature Toggles, A/B Testing, Proportional Shedding
+
+## Integrability Tactics
+- **Limit Dependencies**: Encapsulate, Use Intermediary, Restrict Communication Paths, Adhere to Standards, Abstract Common Services
+- **Adapt**: Discover Services, Tailor Interface, Configure Behavior, Transform Representation
+
+## Usability Tactics
+- **Support User Initiative**: Cancel, Undo, Pause/Resume, Aggregate Commands
+- **Support System Initiative**: Maintain Task Model, Maintain User Model, Maintain System Model
+
+## Interoperability Tactics
+- **Locate**: Discover Service, Use Known Interface
+- **Manage Interfaces**: Orchestrate, Tailor Interface, Transform Representation
+
+## Energy Efficiency Tactics
+- **Monitor Resources**: Metering, Static Classification, Dynamic Classification
+- **Allocate Resources**: Schedule Resources, Reduce Usage, Discovery
+- **Reduce Resource Demand**: Reduce Workload, Manage Sampling Rate, Prioritize Resources
