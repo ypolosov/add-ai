@@ -1,0 +1,34 @@
+{
+  "name": "add-ai-marketplace",
+  "owner": {
+    "name": "ypolosov"
+  },
+  "metadata": {
+    "description": "Architecture Decision Support toolkit marketplace",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "add-ai",
+      "source": {
+        "source": "github",
+        "repo": "ypolosov/add-ai"
+      },
+      "description": "Architecture Decision Support toolkit — ADD 3.0, ADRs, C4 diagrams, requirements engineering, project management, full-stack code generation, CI/CD, testing, code review",
+      "version": "2.0.0",
+      "author": {
+        "name": "ypolosov"
+      },
+      "repository": "https://github.com/ypolosov/add-ai",
+      "license": "MIT",
+      "keywords": [
+        "architecture",
+        "add",
+        "adr",
+        "c4",
+        "ddd",
+        "decision-support"
+      ]
+    }
+  ]
+}
