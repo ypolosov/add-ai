@@ -1,6 +1,6 @@
 ---
 name: pm-status
-description: Status report generation - project progress based on GitHub issues
+description: Status report generation - project progress based on issues (GitHub/Bitbucket/GitLab)
 user_invocable: true
 agent: project-manager
 ---
@@ -8,28 +8,30 @@ agent: project-manager
 # /pm-status - Status Report
 
 ## What this skill does
-Generates a project status report based on GitHub issue states.
+Generates a project status report based on issue states. Auto-detects the git platform.
 
 ## Usage
 - `/pm-status` - Full status report
 - `/pm-status sprint` - Current sprint status
-- `/pm-status role <role>` - Status by role (sa/pm/ba/dev)
+- `/pm-status role <role>` - Status by role (sa/ba/pm/dev/fe/ops/test/review)
 
 ## Process
 
-1. **Collect Data**
-   ```bash
-   gh issue list --state all --json number,title,state,labels,createdAt,closedAt
-   ```
+1. **Detect Platform**
+   - Run `git remote get-url origin` to detect GitHub/Bitbucket/GitLab
+   - Use appropriate CLI/API to fetch issues
 
-2. **Analyze**
+2. **Collect Data**
+   - Fetch all issues with their state, labels, dates via platform CLI/API
+
+3. **Analyze**
    - Count issues by state (open/closed)
    - Group by type (epic/story/task/bug)
-   - Group by role (sa/pm/ba/dev)
+   - Group by role (sa/ba/pm/dev/fe/ops/test/review)
    - Group by priority
    - Calculate completion percentage
 
-3. **Generate Report**
+4. **Generate Report**
    ```markdown
    # Status Report — {date}
 
@@ -57,6 +59,6 @@ Generates a project status report based on GitHub issue states.
    - {action item 1}
    ```
 
-4. **Present and Ask**
+5. **Present and Ask**
    - Show the report
    - Ask if user wants to take action on any items

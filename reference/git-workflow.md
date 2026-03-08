@@ -1,4 +1,4 @@
-# GitHub Workflow Conventions
+# Git Workflow Conventions
 
 ## Labels
 
@@ -11,9 +11,13 @@
 
 ### Role Labels (required on every issue)
 - `role:sa` - Solution Architect
-- `role:pm` - Project Manager
 - `role:ba` - Business Analyst
+- `role:pm` - Project Manager
 - `role:dev` - Backend Developer
+- `role:fe` - Frontend Developer
+- `role:ops` - DevOps Engineer
+- `role:test` - Tester
+- `role:review` - Code Reviewer
 
 ### Priority Labels
 - `priority:high` - Must do, blocking
@@ -41,7 +45,7 @@ Every issue must include:
 - Reference issue number: `feat: add payment module (#42)`
 - Use conventional commits: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`
 
-## PR Conventions
+## PR/MR Conventions
 - Title matches the main change
-- Body references related issues: `Closes #42`
+- Body references related issues
 - Requires review before merge

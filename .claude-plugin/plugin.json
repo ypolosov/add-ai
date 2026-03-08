@@ -1,7 +1,7 @@
 {
   "name": "add-ai",
-  "version": "1.0.0",
-  "description": "Architecture Decision Support toolkit — ADD 3.0, ADRs, C4 diagrams, requirements engineering, project management, NestJS scaffolding",
+  "version": "2.0.0",
+  "description": "Architecture Decision Support toolkit — ADD 3.0, ADRs, C4 diagrams, requirements engineering, project management, full-stack code generation, CI/CD, testing, code review",
   "author": {
     "name": "ypolosov"
   },
@@ -13,8 +13,13 @@
     "adr",
     "c4",
     "ddd",
-    "nestjs",
     "decision-support",
-    "requirements"
+    "requirements",
+    "testing",
+    "code-review",
+    "devops",
+    "frontend",
+    "backend",
+    "ci-cd"
   ]
 }

@@ -1,6 +1,6 @@
 ---
 name: pm-plan
-description: Sprint planning - break down work into GitHub issues
+description: Sprint planning - break down work into issues (GitHub/Bitbucket/GitLab)
 user_invocable: true
 agent: project-manager
 ---
@@ -8,7 +8,7 @@ agent: project-manager
 # /pm-plan - Sprint Planning
 
 ## What this skill does
-Facilitates sprint planning by breaking down architecture decisions and requirements into actionable GitHub issues.
+Facilitates sprint planning by breaking down architecture decisions and requirements into actionable issues. Auto-detects the git platform.
 
 ## Usage
 - `/pm-plan` - Start a planning session
@@ -22,7 +22,7 @@ Facilitates sprint planning by breaking down architecture decisions and requirem
    - Read `docs/architecture/kanban.md` for design decisions ready for implementation
    - Read accepted ADRs from `docs/architecture/adrs/`
    - Read requirements from `docs/requirements/`
-   - List existing GitHub issues: `gh issue list`
+   - Detect git platform and list existing issues via platform CLI/API
 
 2. **Identify Work Items**
    - For each "Decided" item on kanban, propose implementation tasks
@@ -35,7 +35,7 @@ Facilitates sprint planning by breaking down architecture decisions and requirem
    - Ask for sprint scope (how many items)
 
 4. **Create Issues**
-   - Create approved GitHub issues using `gh issue create`
+   - Create approved issues via detected platform CLI/API
    - Apply proper labels (type, role, priority)
    - Link issues to ADRs and requirements in the body
    - Set up epic-story-task relationships via issue references

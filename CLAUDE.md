@@ -2,32 +2,40 @@
 
 ## Overview
 
-Claude Code plugin providing 4 agents and 16 skills for architecture-driven development using ADD 3.0 methodology.
+Claude Code plugin providing 8 agents and 29 skills for architecture-driven development using ADD 3.0 methodology.
 
 ## Plugin Structure
 
 ```
 .claude-plugin/plugin.json   # Plugin manifest
-agents/                      # 4 role-based agents
-skills/                      # 16 skills (slash commands)
+agents/                      # 8 role-based agents
+skills/                      # 29 skills (slash commands)
 reference/                   # Convention docs (not auto-loaded, for human/agent reference)
 ```
 
 ## Agents
 
 - **Solution Architect** — ADD 3.0, ADRs (MADR v3), C4 diagrams (LikeC4), design kanban
-- **Business Analyst** — Utility trees, QAW, use cases, requirements elicitation
-- **Project Manager** — GitHub Issues, sprint planning, status reports
-- **Backend Developer** — NestJS scaffolding (hexagonal/DDD), TDD, code review
+- **Business Analyst** — Utility trees, QAW, use cases, requirements elicitation, mission threads
+- **Project Manager** — Platform-adaptive issue management (GitHub/Bitbucket/GitLab), sprint planning, status reports
+- **Backend Developer** — Backend scaffolding (hexagonal/DDD), feature implementation, framework-adaptive
+- **Frontend Developer** — Frontend scaffolding, UI components, API layer, framework-adaptive
+- **DevOps Engineer** — CI/CD pipelines, Docker, deployment, platform-adaptive
+- **Tester** — Unit/integration/E2E/BDD tests, TDD, framework-adaptive
+- **Code Reviewer** — Code review, PR review, standards audit (read-only)
 
 ## Skills (invoked as `/add-ai:<skill>`)
 
 | Role | Skills |
 |------|--------|
 | SA | `sa-init`, `sa-iterate`, `sa-adr`, `sa-diagram`, `sa-review`, `sa-kanban` |
-| BA | `ba-utility-tree`, `ba-qaw`, `ba-usecase`, `ba-requirements` |
+| BA | `ba-requirements`, `ba-qaw`, `ba-utility-tree`, `ba-usecase`, `ba-mtw` |
 | PM | `pm-plan`, `pm-issue`, `pm-status` |
-| Dev | `dev-scaffold`, `dev-test`, `dev-review` |
+| Backend Dev | `dev-scaffold`, `dev-implement` |
+| Frontend Dev | `fe-scaffold`, `fe-component`, `fe-api` |
+| DevOps | `ops-pipeline`, `ops-docker`, `ops-deploy` |
+| Tester | `test-unit`, `test-integration`, `test-e2e`, `test-bdd` |
+| Code Reviewer | `review-code`, `review-pr`, `review-standards` |
 
 ## Reference Files
 
@@ -35,7 +43,7 @@ Convention docs in `reference/` (not auto-loaded by plugin, available for agents
 - `architecture-conventions.md` — ID formats, directory structure
 - `adr-format.md` — MADR v3 template
 - `likec4.md` — LikeC4 DSL conventions
-- `github-workflow.md` — GitHub labels, branches, commits
+- `git-workflow.md` — Git labels, branches, commits (platform-agnostic)
 - `nestjs-patterns.md` — Hexagonal architecture patterns
 - `gt-context.md` — Example target project context
 

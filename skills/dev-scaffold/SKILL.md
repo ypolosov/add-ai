@@ -1,14 +1,14 @@
 ---
 name: dev-scaffold
-description: NestJS module scaffolding with hexagonal architecture structure
+description: Backend module scaffolding with hexagonal architecture structure (framework-adaptive)
 user_invocable: true
 agent: backend-developer
 ---
 
-# /dev-scaffold - NestJS Module Scaffolding
+# /dev-scaffold - Backend Module Scaffolding
 
 ## What this skill does
-Generates a NestJS module following hexagonal architecture (ports & adapters) and DDD patterns.
+Generates a backend module following hexagonal architecture (ports & adapters) and DDD patterns. Auto-detects the project framework.
 
 ## Usage
 - `/dev-scaffold <module-name>` - Scaffold a new module
@@ -60,4 +60,4 @@ For a module named `{name}`:
 4. Ask for main use cases
 5. Generate all files with proper imports and structure
 6. Register module in `app.module.ts`
-7. Suggest running `/dev-test` to generate tests
+7. Suggest running `/test-unit` to generate tests
