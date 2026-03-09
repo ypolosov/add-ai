@@ -20,7 +20,7 @@
 - `role:review` - Code Reviewer
 - `role:nav` - Navigator
 
-### Phase Labels (SDLC phase tracking)
+### Priority Labels
 - `priority:high` - Must do, blocking
 - `priority:medium` - Important, not blocking
 - `priority:low` - Nice to have

@@ -45,8 +45,8 @@ reference/templates/         # Artifact templates (ADR, DD, QAW, UC, SC, etc.)
 ```
 1. nav-resume     → Assess project state (or first run)
 2. pm-init        → Initialize tracking (boards, labels, milestone)
-3. ba-*           → Gather requirements (UC, QA, CON, CRN, SC)
-4. sa-init        → Initialize architecture
+3. sa-init        → Initialize architecture
+4. ba-*           → Gather requirements (UC, QA, CON, CRN, SC)
 5. sa-iterate     → ADD 3.0 iterations (ADR, DD, C4)
 6. pm-plan        → Sprint planning (stories → issues)
 7. dev/fe/ops-*   → Implementation (with optional TDD)
@@ -80,7 +80,7 @@ Convention docs in `reference/` (not auto-loaded by plugin, available for agents
 - `gt-context.md` — Example target project context
 
 Templates in `reference/templates/`:
-- `adr-template.md`, `dd-template.md`, `qaw-template.md`, `utility-tree-template.md`, `usecase-template.md`, `scenario-template.md`, `iteration-template.md`, `issue-template.md`
+- `adr-template.md`, `dd-template.md`, `qaw-template.md`, `utility-tree-template.md`, `usecase-template.md`, `scenario-template.md`, `iteration-template.md`, `issue-template.md`, `constraint-template.md`, `concern-template.md`
 
 ## Development
 

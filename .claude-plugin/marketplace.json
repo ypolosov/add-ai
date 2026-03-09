@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Architecture Decision Support toolkit marketplace",
-    "version": "1.0.0"
+    "version": "3.0.0"
   },
   "plugins": [
     {
@@ -27,7 +27,16 @@
         "adr",
         "c4",
         "ddd",
-        "decision-support"
+        "decision-support",
+        "requirements",
+        "sdlc",
+        "tdd",
+        "testing",
+        "code-review",
+        "devops",
+        "frontend",
+        "backend",
+        "ci-cd"
       ]
     }
   ]

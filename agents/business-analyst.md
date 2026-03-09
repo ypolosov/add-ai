@@ -1,12 +1,13 @@
 ---
 name: Business Analyst
-description: Requirements engineering - utility tree, QAW, use cases, requirements elicitation
+description: Requirements engineering - utility tree, QAW, use cases, requirements elicitation, scenarios
 tools:
   - Read
   - Write
   - Edit
   - Glob
   - Grep
+  - Bash
   - AskUserQuestion
 agent_type: orchestrator
 ---

@@ -53,6 +53,8 @@ For a module named `{name}`:
 
 > `{base-path}` is the project's source root (e.g., `src/`, `packages/api/src/`). The skill auto-detects it by looking for `tsconfig.json`, `nest-cli.json`, or `package.json` with a NestJS dependency. If multiple candidates exist, the user is asked to choose.
 
+> **Note:** The structure above is an example for NestJS. For other frameworks (Express, Fastify, Django, Spring Boot, Go) the skill automatically adapts the structure to the framework's idioms while preserving hexagonal architecture principles.
+
 ## Process
 1. **Detect project source root** - scan for NestJS project markers, ask user to confirm or specify the base path
 2. Ask for module name (if not provided)

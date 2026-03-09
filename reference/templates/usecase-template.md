@@ -49,8 +49,12 @@
 ### Failure
 - {What is true after failure}
 
+## Architectural Significance
+- **Architecturally Significant:** Yes/No
+- **Reason:** {drives QA-NNN / cross-cutting concern / technically complex / high risk}
+
 ## Quality Attributes
-- {QA-NNN: relevant quality attribute}
+- Related: {QA-NNN, QA-NNN}
 
 ## Business Rules
 - {BR-1: business rule}

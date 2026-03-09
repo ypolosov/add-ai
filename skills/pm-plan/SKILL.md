@@ -25,7 +25,7 @@ Facilitates sprint planning by breaking down architecture decisions and requirem
    - Detect git platform and list existing issues via platform CLI/API
 
 2. **Identify Work Items**
-   - For each "Decided" item on kanban, propose implementation tasks
+   - For each "Completely Addressed" item on kanban, propose implementation tasks
    - Break down into hierarchy: Epic → Stories → Tasks
    - Estimate relative complexity (S/M/L/XL)
 

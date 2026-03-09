@@ -29,42 +29,7 @@ Creates and manages use case specifications in a structured format.
 8. Create driver summary in `docs/architecture/drivers/use-cases/UC-NNN.md`
 
 ## Use Case Template
-```markdown
-# UC-NNN: {Title}
-
-## Actors
-- Primary: {actor}
-- Secondary: {actor}
-
-## Preconditions
-- {condition 1}
-
-## Main Success Scenario
-1. {step}
-2. {step}
-3. {step}
-
-## Alternative Flows
-### AF-1: {name}
-- At step N: {alternative}
-
-## Error Flows
-### EF-1: {name}
-- At step N: {error handling}
-
-## Postconditions
-- {condition}
-
-## Architectural Significance
-- **Architecturally Significant:** Yes/No
-- **Reason:** {drives QA-NNN / cross-cutting concern / technically complex / high risk}
-
-## Quality Attributes
-- Related: QA-NNN, QA-NNN
-
-## Business Rules
-- {rule 1}
-```
+Use template from `reference/templates/usecase-template.md`.
 
 ## Listing Use Cases
 Read `docs/requirements/use-cases/` and present a summary table:
