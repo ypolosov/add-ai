@@ -16,6 +16,12 @@ Scans all project artifacts across all roles and SDLC phases to determine the cu
 
 ## Process
 
+0. **Check Complementary Capabilities** (silent — no output unless detected)
+   - Check if project knowledge retrieval MCP tools are available in this session
+   - Note any first-principles analysis capabilities if present
+   - Store results for use in Step 5 recommendations
+   - Do NOT add extra sections if nothing complementary is detected
+
 1. **Scan Artifacts** - Check existence and contents of project artifacts per SDLC phase:
 
    | # | Phase | Completed When | Scan Paths | Next Skill |
@@ -95,6 +101,10 @@ Scans all project artifacts across all roles and SDLC phases to determine the cu
    2. {alternative}
    3. {another option}
    ```
+
+   If complementary capabilities were detected in Step 0, include them
+   as additional options in Recommended Next Steps (e.g., "deeper boundary
+   analysis available", "project knowledge retrieval available").
 
    Brief mode — single line:
    ```

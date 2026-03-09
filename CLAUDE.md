@@ -82,6 +82,14 @@ Convention docs in `reference/` (not auto-loaded by plugin, available for agents
 Templates in `reference/templates/`:
 - `adr-template.md`, `dd-template.md`, `qaw-template.md`, `utility-tree-template.md`, `usecase-template.md`, `scenario-template.md`, `iteration-template.md`, `issue-template.md`, `constraint-template.md`, `concern-template.md`
 
+## Creation Chain (optional)
+
+add-ai can serve as a methodology layer in a creation chain — a sequence of
+creating systems where each creates value for the next.
+Agents may benefit from complementary capabilities (first-principles thinking,
+project knowledge retrieval) if available in the session.
+See `reference/creation-chain.md` for capability needs. Chain awareness is additive.
+
 ## Development
 
 ```bash

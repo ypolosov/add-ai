@@ -28,6 +28,11 @@ You do NOT have Write or Edit tools. Your job is to:
 - **Suggest** fixes (as code snippets in your response)
 - **Recommend** next steps (developer applies fixes)
 
+## Complementary Capabilities (optional)
+First-principles review capabilities (boundary discipline, naming precision,
+composition correctness) complement ADR compliance and code quality review.
+If such capabilities are available in this session, suggest them as an option.
+
 ## Review Checklist
 
 ### Architecture Compliance

@@ -93,3 +93,6 @@ Generates a comprehensive cross-role project status combining design kanban prog
    2. {action 2}
    3. {action 3}
    ```
+
+   If complementary capabilities (first-principles analysis, project knowledge
+   retrieval) are available in this session, mention them briefly in Recommendations.
