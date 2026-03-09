@@ -18,11 +18,19 @@
 - `role:ops` - DevOps Engineer
 - `role:test` - Tester
 - `role:review` - Code Reviewer
+- `role:nav` - Navigator
 
-### Priority Labels
+### Phase Labels (SDLC phase tracking)
 - `priority:high` - Must do, blocking
 - `priority:medium` - Important, not blocking
 - `priority:low` - Nice to have
+
+### Phase Labels (SDLC phase tracking)
+- `phase:requirements` - Requirements gathering and analysis
+- `phase:architecture` - Architecture design and decisions
+- `phase:development` - Implementation (backend, frontend, infrastructure)
+- `phase:testing` - Testing (unit, integration, E2E, BDD)
+- `phase:review` - Code review and quality assurance
 
 ### Status Labels
 - `status:backlog` - Not started

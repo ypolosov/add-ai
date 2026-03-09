@@ -1,21 +1,23 @@
-# ADD-AI Hello World: Полный пример использования всех 8 ролей
+# ADD-AI Hello World: Полный пример использования всех 9 ролей
 
 > Пошаговый туториал использования плагина **add-ai** на примере проекта **TaskFlow** — простого Todo API с веб-интерфейсом.
-> Демонстрирует все **8 ролей** и **30 скиллов** в реалистичном сценарии архитектурно-управляемой разработки.
+> Демонстрирует все **9 ролей** и **32 скилла** в реалистичном сценарии архитектурно-управляемой разработки.
 
 ## Содержание
 
 - [Введение](#введение)
-- [Фаза 1: Business Analyst](#фаза-1-business-analyst)
-- [Фаза 2: Solution Architect](#фаза-2-solution-architect)
-- [Фаза 3: Project Manager](#фаза-3-project-manager)
-- [Фаза 4: Backend Developer](#фаза-4-backend-developer)
-- [Фаза 5: Frontend Developer](#фаза-5-frontend-developer)
-- [Фаза 6: DevOps Engineer](#фаза-6-devops-engineer)
-- [Фаза 7: Tester](#фаза-7-tester)
-- [Фаза 8: Code Reviewer](#фаза-8-code-reviewer)
-- [Бонус: Возобновление сессии](#бонус-возобновление-сессии)
-- [Сводная таблица: все 30 скиллов](#сводная-таблица-все-30-скиллов)
+- [Фаза 0: Navigator — оценка состояния](#фаза-0-navigator--оценка-состояния)
+- [Фаза 1: Project Manager — инициализация трекинга](#фаза-1-project-manager--инициализация-трекинга)
+- [Фаза 2: Business Analyst](#фаза-2-business-analyst)
+- [Фаза 3: Solution Architect](#фаза-3-solution-architect)
+- [Фаза 4: Project Manager — спринт-планирование](#фаза-4-project-manager--спринт-планирование)
+- [Фаза 5: Backend Developer](#фаза-5-backend-developer)
+- [Фаза 6: Frontend Developer](#фаза-6-frontend-developer)
+- [Фаза 7: DevOps Engineer](#фаза-7-devops-engineer)
+- [Фаза 8: Tester](#фаза-8-tester)
+- [Фаза 9: Code Reviewer](#фаза-9-code-reviewer)
+- [Бонус: Navigator — статус и возобновление](#бонус-navigator--статус-и-возобновление)
+- [Сводная таблица: все 32 скилла](#сводная-таблица-все-32-скилла)
 
 ---
 
@@ -23,7 +25,7 @@
 
 ### Что такое add-ai?
 
-**add-ai** — это плагин для [Claude Code](https://claude.com/claude-code), предоставляющий 8 ролевых агентов и 30 скиллов для архитектурно-управляемой разработки по методологии ADD 3.0.
+**add-ai** — это плагин для [Claude Code](https://claude.com/claude-code), предоставляющий 9 ролевых агентов и 32 скилла для архитектурно-управляемой разработки по методологии ADD 3.0.
 
 Плагин помогает на всех этапах жизненного цикла проекта — от выявления требований и проектирования архитектуры до генерации кода, тестирования и код-ревью.
 
@@ -69,7 +71,7 @@ claude --plugin-dir ./add-ai
 | 2 | `/add-ai:ba-qaw` | Quality Attribute Workshop: определяем QA-сценарии | `docs/requirements/qaw-results.md` |
 | 3 | `/add-ai:ba-utility-tree` | Приоритизируем QA: строим дерево утилитарности | `docs/requirements/utility-tree.md` |
 | 4 | `/add-ai:ba-usecase` | Документируем ключевые use case'ы | `docs/requirements/use-cases/UC-001-create-task.md` |
-| 5 | `/add-ai:ba-mtw` | Mission Thread: сквозной сценарий жизненного цикла задачи | `docs/requirements/mission-threads/MT-001-task-lifecycle.md` |
+| 5 | `/add-ai:ba-scenario` | Сценарий: сквозной flow жизненного цикла задачи | `docs/requirements/scenarios/SC-001-task-lifecycle.md` |
 
 ### 1.1 Выявление требований (`ba-requirements`)
 
@@ -199,38 +201,37 @@ BA: Создаю спецификацию UC-001: Create Task.
 
 **Результат**: `docs/requirements/use-cases/UC-001-create-task.md` — полная спецификация с предусловиями, основным сценарием, альтернативными путями и связями с QA.
 
-### 1.5 Mission Thread Workshop (`ba-mtw`)
+### 1.5 Scenario Workshop (`ba-scenario`)
 
-Сквозной сценарий, прослеживающий путь через всю систему.
+Сквозной сценарий (SC-NNN), прослеживающий путь через всю систему как цепочку UC-NNN шагов с QA-NNN чекпоинтами.
 
 ```
-User: /add-ai:ba-mtw
+User: /add-ai:ba-scenario
 
-BA: Определим mission thread для TaskFlow.
-    Какой сквозной сценарий хотите проследить?
+BA: Определим сквозной сценарий для TaskFlow.
+    Какую операционную цель хотите проследить от начала до конца?
 
 User: Полный жизненный цикл задачи: создание → работа → завершение.
 
-BA: Mission Thread: MT-001 — Task Lifecycle
+BA: Scenario: SC-001 — Task Lifecycle
 
-    1. User opens TaskFlow web UI
-    2. User clicks "New Task", fills form, submits
-    3. Frontend sends POST /api/tasks to Backend
-    4. Backend validates, creates entity, persists to PostgreSQL
-    5. Backend returns 201 Created with task data
-    6. Frontend updates task list (optimistic update)
-    7. User changes task status: todo → in-progress → done
-    8. Each status change: PATCH /api/tasks/:id
-    9. Backend emits domain event TaskStatusChanged
-    10. Frontend reflects updated status
+    | Step | UC Ref  | Actor/System | Action                              | QA Checkpoints         |
+    |------|---------|-------------|--------------------------------------|------------------------|
+    | 1    | UC-001  | User        | Opens TaskFlow, creates task         | —                      |
+    | 2    | UC-001  | Frontend    | POST /api/tasks                      | QA-001: <200ms         |
+    | 3    | UC-001  | Backend     | Validate, persist to PostgreSQL      | QA-002: no data loss   |
+    | 4    | UC-001  | Backend     | Return 201 Created                   | QA-003: REST contract  |
+    | 5    | UC-002  | User        | Change status: todo → in-progress    | —                      |
+    | 6    | UC-002  | Frontend    | PATCH /api/tasks/:id                 | QA-001: <200ms         |
+    | 7    | UC-002  | Backend     | Update status, emit event            | QA-002: no data loss   |
+    | 8    | UC-003  | User        | Complete task: in-progress → done    | —                      |
 
-    Затронутые QA:
-    • QA-001 (Performance): шаги 3-6, 8
-    • QA-002 (Reliability): шаги 4, 8
-    • QA-003 (Interoperability): шаги 3, 5, 8
+    Трассировка:
+    • SC-001 → features/SC-001-task-lifecycle.feature (BDD)
+    • SC-001 → e2e/SC-001-task-lifecycle.spec.ts (E2E)
 ```
 
-**Результат**: `docs/requirements/mission-threads/MT-001-task-lifecycle.md`.
+**Результат**: `docs/requirements/scenarios/SC-001-task-lifecycle.md`.
 
 ---
 
@@ -1278,21 +1279,22 @@ Reviewer: Загружаю PR #5 из GitHub...
 
 ---
 
-## Бонус: Возобновление сессии
+## Бонус: Navigator — статус и возобновление
 
-Скилл `sa-resume` сканирует существующие артефакты и восстанавливает контекст проекта:
+Скилл `nav-resume` (Navigator) сканирует все артефакты всех ролей и определяет текущую SDLC-фазу:
 
 ```
-User: /add-ai:sa-resume
+User: /add-ai:nav-resume
 
-SA: Сканирую артефакты проекта...
+Navigator: Сканирую артефакты проекта...
 
-    📊 Текущее состояние TaskFlow:
+    Текущее состояние TaskFlow:
     ─────────────────────────────
-    Фаза: Implementation
+    SDLC Phase: Development
 
     Requirements:
     • Use cases: 5 (UC-001..UC-005)
+    • Scenarios: 1 (SC-001 task lifecycle)
     • QA scenarios: 5 (3 addressed, 2 partially)
     • Constraints: 2, Concerns: 2
 
@@ -1301,56 +1303,80 @@ SA: Сканирую артефакты проекта...
     • Iterations: 2 completed
     • C4 diagrams: context, container, component
 
-    Implementation:
-    • Issues: 12 (8 closed, 4 open)
-    • Backend: Task module scaffolded + CRUD implemented
-    • Frontend: scaffold + TaskCard done, API layer pending
-    • Tests: 12 unit, 4 integration, 0 E2E
+    Issues by Phase:
+    • phase:requirements: 5/5 done
+    • phase:architecture: 3/3 done
+    • phase:development: 4/8 in progress
+    • phase:testing: 0/4 not started
 
-    🎯 Рекомендуемые следующие шаги:
+    Traceability Gaps:
+    • SC-001 has no BDD feature file yet
+    • QA-004 has no ADR
+
+    Рекомендуемые следующие шаги:
     1) Завершить реализацию UC-003 (фильтрация задач)
-    2) Создать E2E тесты для UC-001
+    2) Создать BDD feature из SC-001 (/add-ai:test-bdd SC-001)
     3) Интегрировать API слой на фронтенде (/add-ai:fe-api)
     4) Провести sa-review для оценки покрытия QA-004
-    5) Обновить статус проекта (/add-ai:pm-status)
+    5) Посмотреть полный статус (/add-ai:nav-status)
+```
+
+Для детального мета-статуса используйте `nav-status`:
+
+```
+User: /add-ai:nav-status
+
+Navigator: Unified Project Status — 2026-03-09
+
+    Progress: 65% (drivers: 3/5 addressed, issues: 8/12 closed)
+    Design Kanban: 0 Not | 2 Partially | 3 Completely | 2 Implemented | 0 Verified
+    Traceability: 1 gap (SC-001 → no BDD feature)
+    Blockers: none
+
+    Рекомендации:
+    1) Закрыть оставшиеся dev issues
+    2) Генерировать тесты из SC-001
+    3) Запланировать review фазу
 ```
 
 ---
 
-## Сводная таблица: все 30 скиллов
+## Сводная таблица: все 32 скилла
 
 | # | Роль | Скилл | Фаза | Что делает |
 |---|------|-------|------|-----------|
-| 1 | BA | `ba-requirements` | 1 | Выявление требований (интерактивная сессия) |
-| 2 | BA | `ba-qaw` | 1 | Quality Attribute Workshop |
-| 3 | BA | `ba-utility-tree` | 1 | Дерево утилитарности (приоритизация QA) |
-| 4 | BA | `ba-usecase` | 1 | Документирование use case'ов |
-| 5 | BA | `ba-mtw` | 1 | Mission Thread Workshop |
-| 6 | SA | `sa-init` | 2 | Инициализация `docs/architecture/` |
-| 7 | SA | `sa-iterate` | 2 | Итерация ADD 3.0 (7-step process) |
-| 8 | SA | `sa-adr` | 2 | Architecture Decision Record (MADR v3) |
-| 9 | SA | `sa-diagram` | 2 | C4 диаграммы (LikeC4 DSL) |
-| 10 | SA | `sa-kanban` | 2 | Design kanban board |
-| 11 | SA | `sa-review` | 2 | Ревью архитектуры vs QA |
-| 12 | SA | `sa-resume` | * | Возобновление сессии (сканирование артефактов) |
-| 13 | PM | `pm-plan` | 3 | Спринт-планирование (ADR → issues) |
-| 14 | PM | `pm-issue` | 3 | Управление issues (GitHub/GitLab/Bitbucket) |
-| 15 | PM | `pm-status` | 3 | Статус-отчёт проекта |
-| 16 | Dev | `dev-scaffold` | 4 | Scaffold бэкенд-модуля (hexagonal) |
-| 17 | Dev | `dev-implement` | 4 | Реализация use case'а |
-| 18 | FE | `fe-scaffold` | 5 | Scaffold страниц и роутов |
-| 19 | FE | `fe-component` | 5 | UI компонент (typed props, a11y) |
-| 20 | FE | `fe-api` | 5 | Типизированный API слой |
-| 21 | Ops | `ops-docker` | 6 | Docker конфигурация (multi-stage) |
-| 22 | Ops | `ops-pipeline` | 6 | CI/CD pipeline (platform-adaptive) |
-| 23 | Ops | `ops-deploy` | 6 | Конфигурация деплоя (K8s, Fly.io и др.) |
-| 24 | Test | `test-unit` | 7 | Юнит-тесты (domain, services) |
-| 25 | Test | `test-integration` | 7 | Интеграционные тесты (API + DB) |
-| 26 | Test | `test-e2e` | 7 | E2E тесты (Playwright, Page Objects) |
-| 27 | Test | `test-bdd` | 7 | BDD сценарии (Gherkin + steps) |
-| 28 | Review | `review-code` | 8 | Ревью кода vs ADR и паттерны |
-| 29 | Review | `review-standards` | 8 | Аудит стандартов проекта |
-| 30 | Review | `review-pr` | 8 | Ревью Pull Request |
+| 1 | Nav | `nav-resume` | * | Возобновление сессии (сканирование всех артефактов) |
+| 2 | Nav | `nav-status` | * | Мета-статус проекта (kanban + issues + traceability) |
+| 3 | BA | `ba-requirements` | 2 | Выявление требований (интерактивная сессия) |
+| 4 | BA | `ba-qaw` | 2 | Quality Attribute Workshop |
+| 5 | BA | `ba-utility-tree` | 2 | Дерево утилитарности (приоритизация QA) |
+| 6 | BA | `ba-usecase` | 2 | Документирование use case'ов (UC-NNN) |
+| 7 | BA | `ba-scenario` | 2 | Scenario Workshop (SC-NNN из UC + QA) |
+| 8 | SA | `sa-init` | 3 | Инициализация `docs/architecture/` |
+| 9 | SA | `sa-iterate` | 3 | Итерация ADD 3.0 (7-step process) |
+| 10 | SA | `sa-adr` | 3 | Architecture Decision Record (MADR v3) |
+| 11 | SA | `sa-diagram` | 3 | C4 диаграммы (LikeC4 DSL) |
+| 12 | SA | `sa-kanban` | 3 | Design kanban board |
+| 13 | SA | `sa-review` | 3 | Ревью архитектуры vs QA |
+| 14 | PM | `pm-init` | 1 | Инициализация трекинга (labels, milestone, stories) |
+| 15 | PM | `pm-plan` | 4 | Спринт-планирование (ADR → issues) |
+| 16 | PM | `pm-issue` | * | Управление issues (GitHub/GitLab/Bitbucket) |
+| 17 | PM | `pm-status` | * | Статус-отчёт проекта |
+| 18 | Dev | `dev-scaffold` | 5 | Scaffold бэкенд-модуля (hexagonal) |
+| 19 | Dev | `dev-implement` | 5 | Реализация use case'а (+ TDD mode) |
+| 20 | FE | `fe-scaffold` | 5 | Scaffold страниц и роутов |
+| 21 | FE | `fe-component` | 5 | UI компонент (typed props, a11y, + TDD mode) |
+| 22 | FE | `fe-api` | 5 | Типизированный API слой (+ TDD mode) |
+| 23 | Ops | `ops-docker` | 5 | Docker конфигурация (multi-stage) |
+| 24 | Ops | `ops-pipeline` | 5 | CI/CD pipeline (platform-adaptive) |
+| 25 | Ops | `ops-deploy` | 5 | Конфигурация деплоя (K8s, Fly.io и др.) |
+| 26 | Test | `test-unit` | 6 | Юнит-тесты (domain, services) |
+| 27 | Test | `test-integration` | 6 | Интеграционные тесты (API + DB) |
+| 28 | Test | `test-e2e` | 6 | E2E тесты из SC-NNN (Playwright, Page Objects) |
+| 29 | Test | `test-bdd` | 6 | BDD сценарии из SC-NNN (Gherkin + steps) |
+| 30 | Review | `review-code` | 7 | Ревью кода vs ADR и паттерны |
+| 31 | Review | `review-standards` | 7 | Аудит стандартов проекта |
+| 32 | Review | `review-pr` | 7 | Ревью Pull Request |
 
 ---
 
@@ -1391,4 +1417,4 @@ SA: Сканирую артефакты проекта...
            └──────────────┘
 ```
 
-> **Примечание**: Фазы 4-6 могут выполняться параллельно. Фаза 7 (тесты) может начинаться одновременно с Фазой 4 (TDD-подход). Скилл `sa-resume` можно вызвать на любом этапе.
+> **Примечание**: Dev/FE/Ops фазы могут выполняться параллельно. Тесты могут начинаться одновременно с реализацией (TDD mode в `dev-implement`/`fe-component`/`fe-api`). Скиллы `nav-resume` и `nav-status` можно вызвать на любом этапе.

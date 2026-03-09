@@ -11,9 +11,10 @@ agent: tester
 Generates end-to-end tests derived from use cases, using Page Object Model for maintainability.
 
 ## Usage
+- `/test-e2e <scenario-id>` - Generate E2E test from a scenario (e.g., SC-001) — preferred for cross-cutting flows
 - `/test-e2e <use-case-id>` - Generate E2E test from a use case (e.g., UC-001)
 - `/test-e2e <flow-name>` - Generate E2E test for a named user flow
-- `/test-e2e` - Interactive: list use cases and ask which to test
+- `/test-e2e` - Interactive: list scenarios/use cases and ask which to test
 
 ## Process
 
@@ -22,7 +23,9 @@ Generates end-to-end tests derived from use cases, using Page Object Model for m
    - Cypress (`cypress.config.*`, `cypress/`)
    - Selenium/WebDriver
    - If none found, suggest Playwright and ask
-2. **Read use case** from `docs/requirements/use-cases/` (if UC-ID provided)
+2. **Read source artifact**:
+   - If SC-NNN: read scenario from `docs/requirements/scenarios/` — use scenario flow as test steps with QA assertions
+   - If UC-NNN: read use case from `docs/requirements/use-cases/`
 3. **Design test scenarios**:
    - Happy path (main flow)
    - Alternative flows

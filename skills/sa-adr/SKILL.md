@@ -27,7 +27,7 @@ Creates and manages Architecture Decision Records in MADR v3 format.
    - Considered options (at least 2-3)
 3. For each option, discuss pros/cons with the user
 4. Ask user to choose the preferred option
-5. Generate ADR file using MADR v3 template from `sa-adr/madr-template.md`
+5. Generate ADR file using MADR v3 template from `reference/templates/adr-template.md`
 6. Save to `docs/architecture/adrs/NNNN-kebab-case-title.md`
 7. Update kanban if relevant
 

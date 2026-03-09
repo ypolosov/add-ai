@@ -55,11 +55,11 @@ Guides the user through one complete ADD 3.0 iteration interactively, following 
 
 ### Step 4: Choose Design Concepts
 1. For each selected driver, propose applicable:
-   - Reference architectures (see `templates.md` → Reference Architectures)
+   - Reference architectures (see `reference/tactics-catalog.md` → Reference Architectures)
    - Architecture patterns (e.g., CQRS, Event Sourcing, Saga)
    - Tactics (e.g., load balancing, caching, circuit breaker)
    - Technologies (e.g., Redis, Kafka, PostgreSQL)
-2. Reference `sa-iterate/templates.md` for pattern/tactics catalog
+2. Reference `reference/tactics-catalog.md` for pattern/tactics catalog
 3. Ask: "Достаточно ли информации для решения, или нужен spike/prototype?"
    - If spike needed → create `type:spike` issue via `/pm-issue`, defer driver to next iteration
 4. Present pros/cons table for each alternative:
@@ -87,7 +87,7 @@ Guides the user through one complete ADD 3.0 iteration interactively, following 
 ### Step 6: Sketch Views & Record Decisions
 1. Update LikeC4 diagrams (`docs/architecture/c4/src/`)
 2. Create ADRs for significant decisions (using `/sa-adr` internally)
-3. Create design decision records in `docs/architecture/decisions/` using DD template (see `skills/sa-iterate/dd-template.md` for format, `sa-init` creates `decisions/DD-000-template.md`)
+3. Create design decision records in `docs/architecture/decisions/` using DD template (see `reference/templates/dd-template.md` for format, `sa-init` creates `decisions/DD-000-template.md`)
 4. Create LikeC4 dynamic views for key interactions (using `/sa-diagram dynamic` if needed)
 5. Show user the updated views
 

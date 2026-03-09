@@ -11,6 +11,7 @@ agent: tester
 Generates BDD scenarios in Gherkin format (Given/When/Then) and corresponding step definitions.
 
 ## Usage
+- `/test-bdd <scenario-id>` - Generate BDD feature from a scenario (e.g., SC-001) — preferred for cross-cutting flows
 - `/test-bdd <use-case-id>` - Generate BDD scenarios from a use case (e.g., UC-001)
 - `/test-bdd <feature-name>` - Generate BDD scenarios for a named feature
 - `/test-bdd` - Interactive: ask for feature details
@@ -23,7 +24,9 @@ Generates BDD scenarios in Gherkin format (Given/When/Then) and corresponding st
    - **Behave** (Python) — `behave` in deps, `features/` dir
    - **SpecFlow** (.NET) — `.feature` files with SpecFlow references
    - If none found, suggest based on project stack and ask
-2. **Read use case** from `docs/requirements/use-cases/` (if UC-ID provided)
+2. **Read source artifact**:
+   - If SC-NNN: read scenario from `docs/requirements/scenarios/` — use scenario flow steps as Gherkin scenarios
+   - If UC-NNN: read use case from `docs/requirements/use-cases/`
 3. **Generate feature file** in Gherkin:
    ```gherkin
    Feature: {feature name}
@@ -63,4 +66,5 @@ features/
 - Use Background for shared preconditions
 - Use Scenario Outline for data-driven scenarios
 - Step definitions should be reusable across features
-- Reference requirement IDs: `# UC-001`
+- Reference requirement IDs: `# UC-001` or `# SC-001`
+- For SC-NNN scenarios: generate one feature file per scenario, with QA checkpoints as assertion steps

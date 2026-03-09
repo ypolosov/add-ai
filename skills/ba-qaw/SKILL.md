@@ -34,7 +34,7 @@ Facilitates a Quality Attribute Workshop (QAW) to systematically identify and sp
 ### Part 4: Identification of Architecture Drivers
 1. List key quality attributes relevant to the system
 2. For each attribute, brainstorm specific scenarios
-3. Use the 6-part scenario template (see `ba-qaw/template.md`)
+3. Use the 6-part scenario template (see `reference/templates/qaw-template.md`)
 
 ### Part 5: Scenario Brainstorming
 For each quality attribute category:

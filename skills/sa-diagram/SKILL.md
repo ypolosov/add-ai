@@ -31,7 +31,7 @@ Creates and updates C4 architecture diagrams, dynamic views (interaction/sequenc
    - New relationship?
    - Update existing element?
 
-3. Apply changes following LikeC4 DSL syntax (see `likec4-reference.md` in this skill directory)
+3. Apply changes following LikeC4 DSL syntax (see `reference/likec4.md`)
 
 4. Suggest running `npx likec4 serve` to preview
 

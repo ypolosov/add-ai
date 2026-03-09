@@ -14,8 +14,8 @@
         "source": "github",
         "repo": "ypolosov/add-ai"
       },
-      "description": "Architecture Decision Support toolkit — ADD 3.0, ADRs, C4 diagrams, requirements engineering, project management, full-stack code generation, CI/CD, testing, code review",
-      "version": "2.0.0",
+      "description": "Architecture Decision Support toolkit — ADD 3.0, ADRs, C4 diagrams, requirements engineering, SDLC navigation, project management, full-stack code generation (with TDD), CI/CD, testing, code review",
+      "version": "3.0.0",
       "author": {
         "name": "ypolosov"
       },
