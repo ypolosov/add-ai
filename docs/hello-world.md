@@ -1,904 +1,1388 @@
-# ADD-AI Hello World: Полный пример использования всех 9 ролей
+# Hello World: полный SDLC-цикл с ADD-AI
 
-> Пошаговый туториал использования плагина **add-ai** на примере проекта **TaskFlow** — простого Todo API с веб-интерфейсом.
-> Демонстрирует все **9 ролей** и **32 скилла** в реалистичном сценарии архитектурно-управляемой разработки.
+Пошаговый tutorial, в котором мы проведём простое fullstack-приложение через весь цикл architecture-driven development — от первой оценки состояния до финального статус-отчёта.
+
+**Что строим:** NestJS backend (`GET /api/hello`) + Next.js frontend (отображает приветствие)
+**Зачем:** показать как 20 из 32 скиллов ADD-AI работают вместе в реальном SDLC-процессе
+**Формат:** каждый шаг = команда → диалог с агентом → созданные артефакты
 
 ## Содержание
 
-- [Введение](#введение)
-- [Фаза 0: Navigator — оценка состояния](#фаза-0-navigator--оценка-состояния)
-- [Фаза 1: Project Manager — инициализация трекинга](#фаза-1-project-manager--инициализация-трекинга)
-- [Фаза 2: Business Analyst](#фаза-2-business-analyst)
-- [Фаза 3: Solution Architect](#фаза-3-solution-architect)
-- [Фаза 4: Project Manager — спринт-планирование](#фаза-4-project-manager--спринт-планирование)
-- [Фаза 5: Backend Developer](#фаза-5-backend-developer)
-- [Фаза 6: Frontend Developer](#фаза-6-frontend-developer)
-- [Фаза 7: DevOps Engineer](#фаза-7-devops-engineer)
-- [Фаза 8: Tester](#фаза-8-tester)
-- [Фаза 9: Code Reviewer](#фаза-9-code-reviewer)
-- [Бонус: Navigator — статус и возобновление](#бонус-navigator--статус-и-возобновление)
-- [Сводная таблица: все 32 скилла](#сводная-таблица-все-32-скилла)
+1. [Оценка состояния — `nav-resume`](#шаг-1-оценка-состояния)
+2. [Трекинг проекта — `pm-init`](#шаг-2-трекинг-проекта)
+3. [Инициализация архитектуры — `sa-init`](#шаг-3-инициализация-архитектуры)
+4. [Выявление требований — `ba-requirements`](#шаг-4-выявление-требований)
+5. [Use case — `ba-usecase`](#шаг-5-use-case)
+6. [Атрибуты качества — `ba-qaw` + `ba-utility-tree`](#шаг-6-атрибуты-качества)
+7. [Итерация архитектуры — `sa-iterate`](#шаг-7-итерация-архитектуры)
+8. [Спринт-планирование — `pm-plan`](#шаг-8-спринт-планирование)
+9. [Backend — `dev-scaffold` + `dev-implement`](#шаг-9-backend)
+10. [Frontend — `fe-scaffold` + `fe-component` + `fe-api`](#шаг-10-frontend)
+11. [Инфраструктура — `ops-docker` + `ops-pipeline`](#шаг-11-инфраструктура)
+12. [Тестирование — `test-unit` + `test-integration`](#шаг-12-тестирование)
+13. [Код-ревью — `review-code` + `review-standards`](#шаг-13-код-ревью)
+14. [Финальный статус — `nav-status`](#шаг-14-финальный-статус)
 
 ---
 
-## Введение
+## Prerequisites
 
-### Что такое add-ai?
+- Claude Code установлен, add-ai плагин подключён (`claude --plugin-dir .` или через settings)
+- GitHub-репозиторий `hello-world` инициализирован, `gh` CLI авторизован
+- Node.js 20+
 
-**add-ai** — это плагин для [Claude Code](https://claude.com/claude-code), предоставляющий 9 ролевых агентов и 32 скилла для архитектурно-управляемой разработки по методологии ADD 3.0.
-
-Плагин помогает на всех этапах жизненного цикла проекта — от выявления требований и проектирования архитектуры до генерации кода, тестирования и код-ревью.
-
-### Установка
+Создайте пустой проект:
 
 ```bash
-# Из marketplace (рекомендуется)
-claude plugin install add-ai
-
-# Или локально из клонированного репозитория
-git clone https://github.com/ypolosov/add-ai.git
-claude --plugin-dir ./add-ai
+mkdir hello-world && cd hello-world
+git init && gh repo create hello-world --public --source=. --push
 ```
-
-### Проект TaskFlow
-
-В этом туториале мы используем проект **TaskFlow** как сквозной пример:
-
-- **Суть**: REST API для управления задачами с веб-интерфейсом
-- **Стек**: NestJS + React + PostgreSQL + Docker + GitHub Actions
-- **Почему этот стек**: покрывает backend, frontend, базу данных, контейнеризацию и CI/CD — все 8 ролей задействованы
-
-### Как читать туториал
-
-Каждая фаза описывает:
-1. **Какие скиллы** вызываются и в каком порядке
-2. **Пример диалога** — как выглядит реальное взаимодействие
-3. **Артефакты** — что создаётся в результате
-
-Все скиллы вызываются командой `/add-ai:<skill>` в Claude Code.
 
 ---
 
-## Фаза 1: Business Analyst
+## Шаг 1: Оценка состояния
 
-> 5 скиллов | Роль: выявление и документирование требований
+Навигатор сканирует все артефакты проекта, определяет текущую SDLC-фазу и предлагает следующие шаги. Точка входа в любую сессию.
 
-Бизнес-аналитик — отправная точка проекта. Он выявляет требования, определяет атрибуты качества и документирует use case'ы.
+**Команда:** `/add-ai:nav-resume`
 
-| # | Команда | Что делаем | Артефакт |
-|---|---------|-----------|----------|
-| 1 | `/add-ai:ba-requirements` | Интерактивная сессия: выявляем требования к TaskFlow | Список UC, QA, CON, CRN |
-| 2 | `/add-ai:ba-qaw` | Quality Attribute Workshop: определяем QA-сценарии | `docs/requirements/qaw-results.md` |
-| 3 | `/add-ai:ba-utility-tree` | Приоритизируем QA: строим дерево утилитарности | `docs/requirements/utility-tree.md` |
-| 4 | `/add-ai:ba-usecase` | Документируем ключевые use case'ы | `docs/requirements/use-cases/UC-001-create-task.md` |
-| 5 | `/add-ai:ba-scenario` | Сценарий: сквозной flow жизненного цикла задачи | `docs/requirements/scenarios/SC-001-task-lifecycle.md` |
-
-### 1.1 Выявление требований (`ba-requirements`)
-
-Начинаем с интерактивной сессии, где BA задаёт вопросы и формирует первичный список требований.
+### Диалог
 
 ```
-User: /add-ai:ba-requirements
+🤖 Navigator:
 
-BA: Расскажите о вашем проекте. Что он делает? Кто основные пользователи?
+# Project Status — 2026-03-12
 
-User: Приложение для управления задачами. Пользователи создают, редактируют,
-      удаляют и завершают задачи. Нужна фильтрация и поиск.
+## Current Position
+- **SDLC Phase:** Not started
+- **Last completed phase:** — (none)
+- **Current phase:** — (none)
+- **Status:** Project not initialized. No docs/ directory found.
 
-BA: Понял. Уточню несколько моментов:
-    1. Нужна ли аутентификация или приложение однопользовательское?
-    2. Какие статусы задачи: только "открыта/завершена" или более сложный workflow?
-    3. Есть ли требования к производительности?
+## Artifacts
+| Artifact | Count | Path |
+|----------|-------|------|
+| Quality Attributes (QA) | 0 | — |
+| Use Cases (UC) | 0 | — |
+| ADRs | 0 | — |
+| ADD Iterations | 0 | — |
 
-User: Однопользовательское пока. Статусы: todo, in-progress, done.
-      По производительности — список до 1000 задач должен грузиться < 500ms.
-
-BA: На основе анализа выделяю следующие артефакты:
-
-    📋 Use Cases:
-    • UC-001: Create Task
-    • UC-002: Update Task Status
-    • UC-003: Filter Tasks by Status
-    • UC-004: Search Tasks by Title
-    • UC-005: Delete Task
-
-    🎯 Quality Attributes:
-    • QA-001: Response time < 500ms for list of 1000 tasks (Performance)
-    • QA-002: Data persists across server restarts (Reliability)
-    • QA-003: API follows REST conventions (Interoperability)
-
-    🔒 Constraints:
-    • CON-001: Single-user, no authentication required
-    • CON-002: PostgreSQL as persistence layer
-
-    ⚠️ Concerns:
-    • CRN-001: Future multi-user support
-    • CRN-002: Mobile-friendly UI
-
-    Варианты:
-    1) Провести QAW для детализации QA-сценариев
-    2) Документировать use case'ы
-    3) Перейти к архитектуре
-    4) Уточнить требования
-    5) Построить дерево утилитарности
+## Recommended Next Steps
+1. `/add-ai:pm-init` — инициализировать трекинг проекта (labels, milestone)
+2. `/add-ai:sa-init` — создать docs/architecture/ со всей структурой
+3. `/add-ai:ba-requirements` — начать сбор требований
 ```
 
-### 1.2 Quality Attribute Workshop (`ba-qaw`)
-
-Структурированная сессия для детальной проработки QA-сценариев.
-
-```
-User: /add-ai:ba-qaw
-
-BA: Запускаю Quality Attribute Workshop для TaskFlow.
-    Начнём с QA-001 (Performance). Опишите сценарий:
-    • Источник стимула: кто/что инициирует?
-    • Стимул: что происходит?
-    • Окружение: в каких условиях?
-    • Артефакт: что затрагивается?
-    • Ответ: как система реагирует?
-    • Мера ответа: как измерить?
-
-User: Пользователь открывает список задач при нормальной нагрузке.
-
-BA: Формализую QA-001:
-
-    QA-001: Performance — Task List Loading
-    ┌─────────────────────────────────────────────┐
-    │ Source:   User                               │
-    │ Stimulus: Requests task list (up to 1000)    │
-    │ Environment: Normal operation                │
-    │ Artifact: Task API endpoint                  │
-    │ Response: Returns paginated task list         │
-    │ Measure:  Response time < 500ms (p95)        │
-    └─────────────────────────────────────────────┘
-
-    Переходим к QA-002...
-```
-
-**Результат**: `docs/requirements/qaw-results.md` с 5 формализованными QA-сценариями (QA-001..QA-005).
-
-### 1.3 Дерево утилитарности (`ba-utility-tree`)
-
-Приоритизация QA-сценариев по важности для бизнеса и сложности реализации.
-
-```
-User: /add-ai:ba-utility-tree
-
-BA: Строю дерево утилитарности на основе QA-001..QA-005.
-
-    Utility Tree: TaskFlow
-    ├── Performance
-    │   └── QA-001: Task list < 500ms .............. (H, M)
-    ├── Reliability
-    │   ├── QA-002: Data persistence ............... (H, L)
-    │   └── QA-004: Graceful error handling ........ (M, L)
-    ├── Interoperability
-    │   └── QA-003: REST conventions ............... (M, L)
-    └── Modifiability
-        └── QA-005: Add new task fields ............ (M, M)
-
-    Шкала: (Business importance, Technical difficulty)
-    H = High, M = Medium, L = Low
-
-    Рекомендация: фокус на QA-001 (единственный H,M) — индексация БД
-    и пагинация на этапе архитектуры.
-```
-
-**Результат**: `docs/requirements/utility-tree.md`.
-
-### 1.4 Документирование use case'ов (`ba-usecase`)
-
-```
-User: /add-ai:ba-usecase
-
-BA: Какой use case документируем? Доступны: UC-001..UC-005.
-
-User: UC-001
-
-BA: Создаю спецификацию UC-001: Create Task.
-```
-
-**Результат**: `docs/requirements/use-cases/UC-001-create-task.md` — полная спецификация с предусловиями, основным сценарием, альтернативными путями и связями с QA.
-
-### 1.5 Scenario Workshop (`ba-scenario`)
-
-Сквозной сценарий (SC-NNN), прослеживающий путь через всю систему как цепочку UC-NNN шагов с QA-NNN чекпоинтами.
-
-```
-User: /add-ai:ba-scenario
-
-BA: Определим сквозной сценарий для TaskFlow.
-    Какую операционную цель хотите проследить от начала до конца?
-
-User: Полный жизненный цикл задачи: создание → работа → завершение.
-
-BA: Scenario: SC-001 — Task Lifecycle
-
-    | Step | UC Ref  | Actor/System | Action                              | QA Checkpoints         |
-    |------|---------|-------------|--------------------------------------|------------------------|
-    | 1    | UC-001  | User        | Opens TaskFlow, creates task         | —                      |
-    | 2    | UC-001  | Frontend    | POST /api/tasks                      | QA-001: <200ms         |
-    | 3    | UC-001  | Backend     | Validate, persist to PostgreSQL      | QA-002: no data loss   |
-    | 4    | UC-001  | Backend     | Return 201 Created                   | QA-003: REST contract  |
-    | 5    | UC-002  | User        | Change status: todo → in-progress    | —                      |
-    | 6    | UC-002  | Frontend    | PATCH /api/tasks/:id                 | QA-001: <200ms         |
-    | 7    | UC-002  | Backend     | Update status, emit event            | QA-002: no data loss   |
-    | 8    | UC-003  | User        | Complete task: in-progress → done    | —                      |
-
-    Трассировка:
-    • SC-001 → features/SC-001-task-lifecycle.feature (BDD)
-    • SC-001 → e2e/SC-001-task-lifecycle.spec.ts (E2E)
-```
-
-**Результат**: `docs/requirements/scenarios/SC-001-task-lifecycle.md`.
+### Что создано
+Ничего — навигатор работает в read-only режиме. Он только анализирует и рекомендует.
 
 ---
 
-## Фаза 2: Solution Architect
+## Шаг 2: Трекинг проекта
 
-> 7 скиллов | Роль: проектирование архитектуры по ADD 3.0
+PM-агент создаёт labels, milestone и начальные stories на GitHub. Это фундамент для дальнейшего планирования спринтов.
 
-Архитектор берёт требования от BA и проектирует систему итеративно — через ADD 3.0 итерации, ADR'ы и C4 диаграммы.
+**Команда:** `/add-ai:pm-init`
 
-| # | Команда | Что делаем | Артефакт |
-|---|---------|-----------|----------|
-| 1 | `/add-ai:sa-init` | Инициализируем `docs/architecture/` | Полная структура каталогов |
-| 2 | `/add-ai:sa-iterate` | 1-я итерация ADD: декомпозиция на контейнеры | `ITER-01.md`, C4, ADR-0001 |
-| 3 | `/add-ai:sa-adr` | ADR: выбор NestJS + гексагональная архитектура | `adrs/0001-nestjs-hexagonal.md` |
-| 4 | `/add-ai:sa-diagram` | C4 диаграммы: context, container, component | `c4/src/model.c4`, `views.c4` |
-| 5 | `/add-ai:sa-iterate` | 2-я итерация: детализация Task модуля | `ITER-02.md`, ADR-0002 |
-| 6 | `/add-ai:sa-kanban` | Обновляем kanban: QA → Addressed | `kanban.md` |
-| 7 | `/add-ai:sa-review` | Ревью архитектуры: покрытие QA, конфликты тактик | Отчёт |
-
-### 2.1 Инициализация архитектуры (`sa-init`)
+### Диалог
 
 ```
-User: /add-ai:sa-init
+🤖 Project Manager:
+
+Обнаружена платформа: GitHub (gh CLI доступен)
+Репозиторий: hello-world
+
+Проверяю существующее состояние...
+- Labels: 0 (создам 26)
+- Milestones: 0 (создам 1)
+- Issues: 0 (предложу 4 начальных stories)
+
+Создать инфраструктуру трекинга?
+
+1. Полная инициализация (labels + milestone + stories)
+2. Только labels
+3. Проверить что есть, показать пробелы
 ```
 
-Создаётся полная структура каталогов:
+```
+👤 User: 1
+```
+
+```
+🤖 Project Manager:
+
+## Project Tracking Initialized
+
+### Labels Created (26)
+- Type: type:epic, type:story, type:task, type:bug, type:spike (5)
+- Role: role:sa, role:ba, role:pm, role:dev, role:fe, role:ops, role:test,
+  role:review, role:nav (9)
+- Phase: phase:requirements, phase:architecture, phase:development,
+  phase:testing, phase:review (5)
+- Priority: priority:high, priority:medium, priority:low (3)
+- Status: status:backlog, status:in-progress, status:review, status:done (4)
+
+### Milestone
+- "Project Inception" created
+
+### Initial Stories
+- #1: Gather requirements (role:ba, phase:requirements)
+- #2: Define architecture (role:sa, phase:architecture)
+- #3: Set up CI/CD (role:ops, phase:development)
+- #4: Set up project infrastructure (role:ops, phase:development)
+
+Что дальше?
+1. `/add-ai:sa-init` — инициализировать архитектурную документацию
+2. `/add-ai:ba-requirements` — начать сбор требований
+3. `/add-ai:nav-resume` — проверить обновлённый статус
+```
+
+### Что создано
+- 26 labels на GitHub (type/role/phase/priority/status)
+- Milestone "Project Inception"
+- 4 issues (#1–#4) с labels
+
+---
+
+## Шаг 3: Инициализация архитектуры
+
+SA-агент создаёт полную структуру `docs/architecture/` с файлами-заглушками для ADD 3.0 процесса, включая LikeC4 проект для C4-диаграмм.
+
+**Команда:** `/add-ai:sa-init`
+
+### Диалог
+
+```
+🤖 Solution Architect:
+
+Перед созданием артефактов нужно установить контекст.
+
+Какова цель дизайна?
+A) Estimation — грубая оценка для предложения/бюджета
+B) Exploratory prototype — spike для снижения неопределённости
+C) Production development — полная архитектура для реализации
+```
+
+```
+👤 User: C
+```
+
+```
+🤖 Solution Architect:
+
+Каков контекст системы?
+A) Greenfield (mature domain) — есть reference architectures и стандарты
+B) Greenfield (novel domain) — высокая неопределённость
+C) Brownfield — расширение существующей системы
+D) Legacy replacement — замена legacy
+```
+
+```
+👤 User: A
+```
+
+```
+🤖 Solution Architect:
+
+## Architecture Initialized
+
+Created docs/architecture/ with:
+
+docs/architecture/
+  README.md                      # Design Purpose: development, Context: greenfield-mature
+  utility-tree.md                # Empty tree structure
+  kanban.md                      # Not Addressed | Partially | Completely | Implemented | Verified
+  c4/
+    package.json                 # likec4 dependency
+    src/
+      specification.c4           # C4 element kinds
+      model.c4                   # System context stub
+      views.c4                   # Initial view definitions
+      deployment.c4              # Empty deployment block
+  adrs/
+    0000-template.md             # MADR v3 template
+  drivers/
+    use-cases/
+    quality-attributes/
+    constraints/
+    concerns/
+  decisions/
+    DD-000-template.md           # Design Decision template
+  views/
+  iterations/
+
+Что дальше?
+1. `/add-ai:ba-requirements` — начать сбор требований
+2. `/add-ai:ba-qaw` — качественные атрибуты через QAW
+3. `/add-ai:ba-utility-tree` — приоритизация атрибутов качества
+```
+
+### Что создано
 
 ```
 docs/architecture/
-├── README.md              # Обзор и ссылки на все разделы
-├── kanban.md              # Design kanban board
-├── utility-tree.md        # Ссылка на дерево утилитарности
-├── c4/                    # LikeC4 проект
+├── README.md
+├── utility-tree.md
+├── kanban.md
+├── c4/
 │   ├── package.json
 │   └── src/
-│       ├── specification.c4   # Виды элементов, стили
-│       ├── model.c4           # Архитектурная модель
-│       ├── views.c4           # Определения видов
-│       └── deployment.c4      # Модель деплоя
-├── adrs/                  # Architecture Decision Records
-├── drivers/               # Архитектурные драйверы
-│   ├── use-cases/         # UC-NNN файлы
-│   ├── quality-attributes/# QA-NNN файлы
-│   ├── constraints/       # CON-NNN файлы
-│   └── concerns/          # CRN-NNN файлы
-├── decisions/             # Design decisions (DD-NNN)
-├── iterations/            # ADD iteration logs (ITER-NN)
-└── views/                 # Архитектурные виды
+│       ├── specification.c4
+│       ├── model.c4
+│       ├── views.c4
+│       └── deployment.c4
+├── adrs/
+│   └── 0000-template.md
+├── drivers/
+│   ├── use-cases/
+│   ├── quality-attributes/
+│   ├── constraints/
+│   └── concerns/
+├── decisions/
+│   └── DD-000-template.md
+├── views/
+└── iterations/
 ```
 
-### 2.2 Первая итерация ADD (`sa-iterate`)
+---
 
-ADD 3.0 итерация — 7-шаговый процесс декомпозиции:
+## Шаг 4: Выявление требований
 
-```
-User: /add-ai:sa-iterate
+BA-агент проводит интерактивную сессию для обнаружения функциональных и нефункциональных требований: use cases, quality attributes, constraints и concerns.
 
-SA: Запускаю итерацию ITER-01.
+**Команда:** `/add-ai:ba-requirements`
 
-    Step 1 — Review inputs:
-    Drivers: UC-001..UC-005, QA-001..QA-005, CON-001..CON-002
-
-    Step 2 — Establish iteration goal:
-    Цель: Декомпозиция TaskFlow на контейнеры (Container level).
-    Фокус: QA-001 (Performance), QA-002 (Reliability).
-
-    Step 3 — Choose element to refine:
-    Refinement target: TaskFlow System (top-level)
-
-    Step 4 — Choose design concepts:
-    • Layered architecture with hexagonal core
-    • SPA + REST API separation
-    • Relational DB for persistence
-
-    Step 5 — Instantiate elements:
-    ┌─────────────────────────────────────────────┐
-    │           TaskFlow System                    │
-    │                                              │
-    │  ┌──────────┐  REST  ┌──────────┐           │
-    │  │ React    │──────→│ NestJS   │           │
-    │  │ SPA      │       │ API      │           │
-    │  └──────────┘       └────┬─────┘           │
-    │                          │ SQL              │
-    │                     ┌────▼─────┐           │
-    │                     │PostgreSQL│           │
-    │                     │ DB       │           │
-    │                     └──────────┘           │
-    └─────────────────────────────────────────────┘
-
-    Step 6 — Sketch views:
-    → Создаю C4 container diagram
-
-    Step 7 — Review:
-    QA-001: Partially addressed (need pagination design)
-    QA-002: Addressed (PostgreSQL persistence)
-    QA-003: Addressed (REST API)
-
-    Варианты:
-    1) Создать ADR для выбора NestJS
-    2) Запустить следующую итерацию (component level)
-    3) Обновить C4 диаграммы
-    4) Обновить kanban
-```
-
-**Результат**: `docs/architecture/iterations/ITER-01.md`.
-
-### 2.3 Architecture Decision Record (`sa-adr`)
+### Диалог
 
 ```
-User: /add-ai:sa-adr
+🤖 Business Analyst:
 
-SA: Какое архитектурное решение документируем?
+Проверяю существующие требования...
+- docs/requirements/ — не существует
+- docs/architecture/drivers/ — пусто
 
-User: Выбор NestJS с гексагональной архитектурой для Backend API.
-
-SA: Создаю ADR-0001 в формате MADR v3.
+Какую область хотите исследовать?
+1. Функциональные требования (что система делает)
+2. Нефункциональные требования (как система работает)
+3. Ограничения и concerns
+4. Всё сразу (комплексная сессия)
 ```
 
-**Результат**: `docs/architecture/adrs/0001-nestjs-hexagonal.md` — полный ADR с контекстом, рассмотренными альтернативами (Express, Fastify), обоснованием выбора и связями с QA-001, QA-005.
-
-### 2.4 C4 диаграммы (`sa-diagram`)
-
 ```
-User: /add-ai:sa-diagram
-
-SA: Какой уровень диаграммы создать или обновить?
-
-User: Container diagram для TaskFlow.
-
-SA: Обновляю docs/architecture/c4/src/model.c4 и views.c4.
+👤 User: 4
 ```
 
-Пример сгенерированной LikeC4 модели:
+```
+🤖 Business Analyst:
 
-```likec4
-// model.c4
-model {
-  user = person "User" {
-    description "Пользователь TaskFlow"
+Отлично, проведём комплексную сессию.
+
+Опишите основную функциональность системы — что она должна делать
+для пользователя?
+```
+
+```
+👤 User: Простое fullstack приложение. Backend на NestJS отдаёт GET /api/hello
+с JSON { message: "Hello, World!" }. Frontend на Next.js вызывает этот endpoint
+и отображает приветствие на странице. В будущем хотим добавить персонализацию
+(имя пользователя), но сейчас это не в скоупе.
+```
+
+```
+🤖 Business Analyst:
+
+Понял. Уточняющие вопросы:
+
+1. Кто является пользователем системы?
+   — Любой посетитель (без аутентификации)?
+
+2. Какие ограничения существуют?
+   — Конкретный стек (NestJS + Next.js)?
+   — Hosting requirements?
+
+3. Есть ли требования к производительности?
+   — Время ответа API, кол-во пользователей?
+```
+
+```
+👤 User:
+1. Да, любой посетитель, аутентификации нет
+2. Стек: NestJS backend + Next.js frontend. Деплоим в Docker
+3. Время ответа API < 200ms. Нагрузка минимальная — это tutorial-проект
+```
+
+```
+🤖 Business Analyst:
+
+Формализую обнаруженные требования:
+
+## Функциональные требования
+- **UC-001: Display Greeting** — пользователь открывает страницу, система
+  отображает приветствие "Hello, World!" полученное от backend API
+
+## Качественные атрибуты
+- **QA-001: API Response Latency** — GET /api/hello отвечает за < 200ms
+  при нормальной нагрузке (6-part scenario будет оформлен через /ba-qaw)
+
+## Ограничения
+- **CON-001: NestJS Backend** — backend реализуется на NestJS (technical)
+- **CON-002: Next.js Frontend** — frontend реализуется на Next.js (technical)
+
+## Concerns
+- **CRN-001: Future Personalization** — в будущем нужна персонализация
+  приветствия по имени пользователя. Сейчас не в скоупе, но архитектура
+  должна позволять расширение.
+
+Всё верно? Сохраняю артефакты?
+
+1. Да, сохранить всё
+2. Добавить ещё требования
+3. Скорректировать существующие
+```
+
+```
+👤 User: 1
+```
+
+```
+🤖 Business Analyst:
+
+## Артефакты сохранены
+
+### Drivers (docs/architecture/drivers/)
+- drivers/use-cases/UC-001.md — Display Greeting (summary)
+- drivers/quality-attributes/QA-001.md — API Response Latency
+- drivers/constraints/CON-001.md — NestJS Backend
+- drivers/constraints/CON-002.md — Next.js Frontend
+- drivers/concerns/CRN-001.md — Future Personalization
+
+### Requirements (docs/requirements/)
+- docs/requirements/ — directory created
+
+Что дальше?
+1. `/add-ai:ba-usecase` — детализировать UC-001 (полный use case spec)
+2. `/add-ai:ba-qaw` — провести QAW для систематического выявления QA
+3. `/add-ai:ba-utility-tree` — приоритизировать атрибуты качества
+```
+
+### Что создано
+
+```
+docs/architecture/drivers/
+├── use-cases/
+│   └── UC-001.md          # Display Greeting (summary)
+├── quality-attributes/
+│   └── QA-001.md          # API Response Latency
+├── constraints/
+│   ├── CON-001.md         # NestJS Backend
+│   └── CON-002.md         # Next.js Frontend
+└── concerns/
+    └── CRN-001.md         # Future Personalization
+
+docs/requirements/         # directory created
+```
+
+---
+
+## Шаг 5: Use case
+
+BA-агент создаёт детальную спецификацию use case: actors, preconditions, main success scenario, alternative/error flows, postconditions.
+
+**Команда:** `/add-ai:ba-usecase create`
+
+### Диалог
+
+```
+🤖 Business Analyst:
+
+Найден driver: UC-001 — Display Greeting. Создаю полную спецификацию.
+
+Опишите основной сценарий: что делает пользователь и как реагирует система?
+```
+
+```
+👤 User: Пользователь открывает главную страницу. Frontend запрашивает
+GET /api/hello. Backend возвращает { message: "Hello, World!" }.
+Frontend отображает сообщение.
+```
+
+```
+🤖 Business Analyst:
+
+## UC-001: Display Greeting
+
+### Summary
+User visits the home page and sees a greeting message fetched from the backend API.
+
+### Actors
+- **Primary**: Anonymous User (browser)
+- **System**: Hello World Application (frontend + backend)
+
+### Preconditions
+1. Backend service is running and accessible
+2. Frontend is loaded in user's browser
+
+### Trigger
+User navigates to the home page (/)
+
+### Main Success Scenario
+1. User opens the home page in browser
+2. Frontend sends GET /api/hello to backend
+3. Backend returns { message: "Hello, World!" } with status 200
+4. Frontend displays the greeting message on the page
+
+### Alternative Flows
+
+#### AF-1: Slow Network
+- **At step:** 2
+- **Condition:** Network latency > 1s
+- **Steps:**
+  1. Frontend shows loading indicator
+  2. Returns to step 3 when response arrives
+
+### Error Flows
+
+#### EF-1: Backend Unavailable
+- **At step:** 2
+- **Condition:** Backend returns 5xx or connection refused
+- **Steps:**
+  1. Frontend displays error message: "Service unavailable"
+  2. User can retry by refreshing the page
+
+### Postconditions
+#### Success
+- Greeting message is visible on the page
+
+#### Failure
+- Error message is displayed instead of greeting
+
+### Architectural Significance
+- **Architecturally Significant:** Yes
+- **Reason:** Drives QA-001 (latency), establishes frontend-backend contract
+
+### Quality Attributes
+- Related: QA-001
+
+Сохраняю?
+
+1. Да, сохранить
+2. Добавить flows
+3. Скорректировать
+```
+
+```
+👤 User: 1
+```
+
+### Что создано
+
+```
+docs/requirements/use-cases/
+└── UC-001-display-greeting.md    # Full use case specification
+
+docs/architecture/drivers/use-cases/
+└── UC-001.md                     # Updated summary with link
+```
+
+---
+
+## Шаг 6: Атрибуты качества
+
+Два скилла работают в паре: `ba-qaw` формализует QA-сценарии в 6-part формат, `ba-utility-tree` приоритизирует их для архитектурных итераций.
+
+### 6a: Quality Attribute Workshop
+
+**Команда:** `/add-ai:ba-qaw`
+
+```
+🤖 Business Analyst:
+
+Начинаем Quality Attribute Workshop.
+
+## Part 1: QAW Overview
+QAW помогает систематически выявить и формализовать качественные атрибуты
+через 6-part сценарии (source → stimulus → artifact → environment →
+response → measure).
+
+Готовы начать?
+
+1. Да, начнём
+2. Объясните подробнее формат 6-part scenario
+```
+
+```
+👤 User: 1
+```
+
+```
+🤖 Business Analyst:
+
+## Part 2: Business Context
+Из ba-requirements известно:
+- Простое fullstack приложение (NestJS + Next.js)
+- Один endpoint: GET /api/hello
+- Нет аутентификации
+- Будущая персонализация (CRN-001)
+
+## Part 4: Architecture Drivers
+Предварительно идентифицирован QA-001: API Response Latency.
+
+Давайте формализуем его в 6-part scenario и проверим, есть ли другие QA.
+
+Для QA-001 — какое поведение вы ожидаете?
+```
+
+```
+👤 User: API должен отвечать меньше чем за 200ms при нормальной нагрузке.
+Для tutorial-проекта это единственный значимый QA.
+```
+
+```
+🤖 Business Analyst:
+
+## QA-001: API Response Latency
+
+| Part | Description |
+|------|-------------|
+| **Source** | Anonymous user (browser) |
+| **Stimulus** | Sends GET /api/hello request |
+| **Artifact** | Hello API endpoint |
+| **Environment** | Normal operation (single user) |
+| **Response** | Return JSON greeting |
+| **Measure** | Response time < 200ms (p95) |
+
+Priority: Business — **M**, Technical Difficulty — **L**
+
+## Part 6: Consolidation
+
+Один QA-сценарий для tutorial-проекта. Сохраняю результаты?
+
+1. Да, сохранить QAW-результаты
+2. Добавить ещё QA-сценарии
+3. Изменить приоритеты
+```
+
+```
+👤 User: 1
+```
+
+### 6b: Utility Tree
+
+**Команда:** `/add-ai:ba-utility-tree build`
+
+```
+🤖 Business Analyst:
+
+Читаю QAW-результаты...
+Найден QA-001: API Response Latency (M, L)
+
+## Utility Tree: Hello World
+
+### Performance
+#### Latency
+- QA-001: API response < 200ms (p95) — Priority: M, Difficulty: L
+
+### Modifiability
+#### Extensibility
+- (linked to CRN-001: Future Personalization) — Priority: M, Difficulty: L
+
+Всего: 1 формализованный QA + 1 неформализованный concern.
+Нет (H,H) драйверов — проект с низким архитектурным риском.
+
+Сохраняю utility tree?
+
+1. Да
+2. Повысить приоритеты
+3. Добавить QA-сценарии
+```
+
+```
+👤 User: 1
+```
+
+### Что создано
+
+```
+docs/requirements/
+├── qaw-results.md                # QAW session log
+└── utility-tree.md               # Prioritized quality attributes
+
+docs/architecture/
+├── utility-tree.md               # Synced copy for SA
+└── drivers/quality-attributes/
+    └── QA-001.md                 # Updated with 6-part scenario
+```
+
+---
+
+## Шаг 7: Итерация архитектуры
+
+SA-агент проводит полную ADD 3.0 итерацию (7 шагов): review inputs → establish goal → choose element → design concepts → instantiate → sketch views → review & assess.
+
+**Команда:** `/add-ai:sa-iterate`
+
+### Диалог
+
+```
+🤖 Solution Architect:
+
+## Step 1: Review Inputs
+
+- **Design Purpose:** Production development
+- **System Context:** Greenfield (mature domain)
+- **Utility Tree:**
+  - QA-001: API latency < 200ms — (M, L)
+- **Drivers:**
+  - UC-001: Display Greeting
+  - CON-001: NestJS Backend
+  - CON-002: Next.js Frontend
+  - CRN-001: Future Personalization
+- **Kanban:** Not Addressed: 3 | Partially: 0 | Completely: 0
+
+Есть ли новые stakeholder concerns, не отражённые в драйверах?
+```
+
+```
+👤 User: Нет, всё учтено.
+```
+
+```
+🤖 Solution Architect:
+
+## Step 2: Iteration Goal
+
+Наиболее приоритетные unaddressed drivers:
+1. UC-001: Display Greeting — основной use case
+2. QA-001: API latency — единственный QA
+3. CRN-001: Future Personalization — concern (влияет на структуру)
+
+Рекомендую все три в одну итерацию (проект простой).
+
+Сформулируйте цель итерации:
+Template: "Итерация ITER-01 решает [что] путём [как]"
+```
+
+```
+👤 User: Итерация ITER-01 решает отображение приветствия (UC-001) с гарантией
+латентности (QA-001) путём разделения на frontend/backend с hexagonal
+architecture на backend.
+```
+
+```
+🤖 Solution Architect:
+
+## Step 3: Choose Element to Refine
+
+Текущая C4-модель содержит один элемент: HelloWorldSystem (system context).
+
+Тип уточнения:
+A) **Decompose** — разбить HelloWorldSystem на компоненты
+B) Improve — улучшить внутреннюю структуру
+C) Add — добавить новый элемент
+
+Рекомендация: **A) Decompose** — разбить систему на Backend (NestJS)
+и Frontend (Next.js) с API-контрактом между ними.
+
+1. Согласен — Decompose
+2. Другой вариант
+```
+
+```
+👤 User: 1
+```
+
+```
+🤖 Solution Architect:
+
+## Step 4: Design Concepts
+
+Для UC-001 + QA-001 + CON-001/002:
+
+| Alternative | Effort | Quality Impact | Risk | Trade-offs |
+|-------------|--------|----------------|------|------------|
+| Monorepo (Nx/Turborepo) | M | Good separation, shared types | L | Build complexity |
+| Separate repos | L | Full isolation | L | No shared types |
+| Monolith (Next.js API routes) | S | Simplest | L | No hexagonal, hard to extend |
+
+Рекомендация: **Separate repos** (два отдельных приложения) —
+простейший вариант для tutorial, чёткое разделение.
+
+Для CRN-001 (modifiability): hexagonal architecture на backend
+обеспечивает расширяемость через порты и адаптеры.
+
+1. Согласен — separate apps + hexagonal backend
+2. Monorepo
+3. Monolith
+```
+
+```
+👤 User: 1
+```
+
+```
+🤖 Solution Architect:
+
+## Step 5: Instantiate Elements
+
+Тип структуры: **C&C structure** (runtime элементы)
+
+| Element | Responsibilities | Provided Interfaces | Required Interfaces |
+|---------|-----------------|---------------------|---------------------|
+| HelloBackend (NestJS) | Serve greeting API | GET /api/hello → JSON | — |
+| HelloFrontend (Next.js) | Display greeting UI | HTML page at / | GET /api/hello |
+| HelloService | Business logic (greeting message) | getGreeting(): string | — |
+| HelloController | HTTP adapter (REST) | GET /api/hello | HelloService |
+
+Архитектурная схема:
+
+```
+User → [Next.js Frontend] → GET /api/hello → [NestJS Backend]
+                                                ├── HelloController (interface)
+                                                ├── HelloService (application)
+                                                └── (core domain — trivial)
+```
+
+Подтверждаете?
+
+1. Да, сохранить и перейти к views
+2. Добавить элементы
+3. Скорректировать
+```
+
+```
+👤 User: 1
+```
+
+```
+🤖 Solution Architect:
+
+## Step 6: Sketch Views & Record Decisions
+
+### ADR-0001: Separate Frontend and Backend Applications
+
+**Status:** Accepted
+**Date:** 2026-03-12
+
+**Context:** Hello World — fullstack приложение с NestJS backend и Next.js
+frontend. Нужно определить как организовать код и runtime-архитектуру.
+
+**Decision Drivers:**
+- UC-001: Display Greeting
+- QA-001: API Response Latency
+- CON-001: NestJS Backend
+- CON-002: Next.js Frontend
+- CRN-001: Future Personalization
+
+**Considered Options:**
+1. Separate applications (NestJS + Next.js)
+2. Monorepo with shared types
+3. Monolith (Next.js API routes only)
+
+**Decision Outcome:** Option 1 — Separate applications.
+Hexagonal architecture on backend for extensibility (CRN-001).
+
+### DD-001: Hexagonal Architecture for Backend
+
+- **Iteration:** ITER-01
+- **Drivers:** QA-001, UC-001, CRN-001
+- **Decision:** Backend follows hexagonal architecture (ports & adapters)
+- **Rationale:** CRN-001 requires easy extension. Hex arch isolates
+  business logic from framework, making future personalization a new
+  adapter/port addition.
+
+### C4 Model Updated
+- model.c4 — decomposed into HelloBackend + HelloFrontend
+- views.c4 — container view + component view for backend
+
+### Kanban Updated
+
+1. Да, всё верно, перейти к review
+2. Скорректировать ADR
+3. Добавить ещё решения
+```
+
+```
+👤 User: 1
+```
+
+```
+🤖 Solution Architect:
+
+## Step 7: Review & Assess
+
+### Tactics Conflict Check
+| Tactic A | QA | Tactic B | QA | Conflict | Resolution |
+|----------|-----|----------|-----|----------|------------|
+| Hexagonal layers | Modifiability | Direct calls | Performance | Minimal overhead | Acceptable — in-process call |
+
+Конфликтов нет — overhead hexagonal architecture пренебрежимо мал
+для in-process вызовов.
+
+### Kanban Update
+| Not Addressed | Partially | Completely | Implemented | Verified |
+|---------------|-----------|------------|-------------|----------|
+| 0             | 0         | 3          | 0           | 0        |
+
+UC-001, QA-001, CRN-001 → **Completely Addressed**
+
+### Stopping Criteria
+- [x] All (H,H) drivers addressed (нет (H,H) — все M/L)
+- [x] Residual risk acceptable
+- [x] Design stabilized
+
+Рекомендация: **Stop** — дизайн достаточен для текущего Design Purpose.
+
+1. Stop — перейти к Sprint Planning
+2. Continue — начать ITER-02
+3. Refine — уточнить текущие решения
+4. Switch — переключиться на BA/PM/Dev
+```
+
+```
+👤 User: 1
+```
+
+### Что создано
+
+```
+docs/architecture/
+├── adrs/
+│   └── 0001-separate-frontend-backend.md    # ADR-0001 (MADR v3)
+├── decisions/
+│   └── DD-001-hexagonal-backend.md          # Design Decision
+├── iterations/
+│   └── ITER-01.md                           # Full 7-step iteration log
+├── kanban.md                                # Updated: 3 Completely Addressed
+├── views/
+│   └── hello-backend-ert.md                 # Element Responsibility Table
+└── c4/src/
+    ├── model.c4                             # Updated: HelloBackend + HelloFrontend
+    └── views.c4                             # Updated: container + component views
+```
+
+---
+
+## Шаг 8: Спринт-планирование
+
+PM-агент превращает архитектурные решения в actionable issues на GitHub: stories и tasks с labels, связанные с ADR и требованиями.
+
+**Команда:** `/add-ai:pm-plan`
+
+### Диалог
+
+```
+🤖 Project Manager:
+
+## Sprint Planning
+
+Читаю контекст...
+- Kanban: 3 items в "Completely Addressed" (UC-001, QA-001, CRN-001)
+- ADR: ADR-0001 accepted (Separate Frontend and Backend)
+- DD: DD-001 (Hexagonal Architecture)
+
+Предлагаю Sprint 1 — "Hello World MVP":
+
+| # | Title | Type | Role | Priority | Size |
+|---|-------|------|------|----------|------|
+| 1 | Backend: scaffold hello module | story | role:dev | high | S |
+| 2 | Backend: implement GET /api/hello | task | role:dev | high | S |
+| 3 | Frontend: scaffold Next.js app | story | role:fe | high | S |
+| 4 | Frontend: greeting component | task | role:fe | high | S |
+| 5 | Frontend: API layer for /api/hello | task | role:fe | medium | S |
+| 6 | Docker setup (backend + frontend) | story | role:ops | medium | S |
+| 7 | CI pipeline (lint + test + build) | story | role:ops | medium | S |
+| 8 | Unit tests | story | role:test | medium | S |
+| 9 | Integration tests | story | role:test | medium | S |
+
+Все issues будут привязаны к milestone "Project Inception"
+и содержать ссылки на ADR-0001, UC-001.
+
+1. Создать все 9 issues
+2. Выбрать подмножество
+3. Скорректировать
+```
+
+```
+👤 User: 1
+```
+
+```
+🤖 Project Manager:
+
+## Sprint 1 Created
+
+Issues created on GitHub:
+- #5: Backend: scaffold hello module (role:dev, phase:development, priority:high)
+- #6: Backend: implement GET /api/hello (role:dev, phase:development, priority:high)
+- #7: Frontend: scaffold Next.js app (role:fe, phase:development, priority:high)
+- #8: Frontend: greeting component (role:fe, phase:development, priority:high)
+- #9: Frontend: API layer (role:fe, phase:development, priority:medium)
+- #10: Docker setup (role:ops, phase:development, priority:medium)
+- #11: CI pipeline (role:ops, phase:development, priority:medium)
+- #12: Unit tests (role:test, phase:testing, priority:medium)
+- #13: Integration tests (role:test, phase:testing, priority:medium)
+
+All linked to milestone "Project Inception".
+
+Что дальше?
+1. `/add-ai:dev-scaffold` — начать с backend scaffolding (#5)
+2. `/add-ai:fe-scaffold` — начать с frontend scaffolding (#7)
+3. `/add-ai:nav-resume` — проверить полный статус
+```
+
+### Что создано
+- 9 issues на GitHub (#5–#13) с labels (type, role, phase, priority)
+- Issues привязаны к milestone "Project Inception"
+- Каждый issue содержит ссылки на ADR-0001, UC-001, DD-001
+
+---
+
+## Шаг 9: Backend
+
+Два скилла: `dev-scaffold` создаёт структуру модуля (hexagonal architecture), `dev-implement` реализует use case.
+
+### 9a: Scaffold
+
+**Команда:** `/add-ai:dev-scaffold hello`
+
+```
+🤖 Backend Developer:
+
+Определяю проект...
+- Framework: NestJS (из CON-001 + package.json)
+- Source root: src/
+- Architecture: hexagonal (из ADR-0001, DD-001)
+
+Scaffold модуля "hello":
+
+```
+src/
+  core/domain/hello/
+    hello.entity.ts                # Greeting entity
+    hello.repository.port.ts       # Repository interface
+
+  core/application/hello/
+    ports/inbound/
+      hello.use-cases.ts           # GetGreeting use case interface
+    services/
+      hello.service.ts             # Use case implementation
+    dto/
+      hello.dto.ts                 # GreetingResponseDto
+
+  interfaces/http/hello/
+    hello.controller.ts            # GET /api/hello
+    hello.response.ts              # Response DTO
+
+  modules/hello/
+    hello.module.ts                # NestJS module wiring
+```
+
+Infrastructure layer пропущен — для простого greeting не нужен
+persistence. HelloService возвращает значение напрямую.
+
+1. Создать все файлы
+2. Добавить infrastructure layer
+3. Скорректировать структуру
+```
+
+```
+👤 User: 1
+```
+
+### 9b: Implement
+
+**Команда:** `/add-ai:dev-implement UC-001`
+
+```
+🤖 Backend Developer:
+
+Читаю UC-001: Display Greeting...
+- Main Success Scenario step 3: Backend returns { message: "Hello, World!" }
+- Related: ADR-0001, DD-001, QA-001
+
+Подход к реализации:
+1. Implementation First — реализация → тесты (по умолчанию)
+2. TDD — тесты → реализация → рефакторинг
+```
+
+```
+👤 User: 1
+```
+
+```
+🤖 Backend Developer:
+
+## Implementation Plan
+
+1. `hello.entity.ts` — Greeting entity с message property
+2. `hello.use-cases.ts` — GetGreetingUseCase interface
+3. `hello.service.ts` — реализация: returns "Hello, World!"
+4. `hello.dto.ts` — GreetingResponseDto { message: string }
+5. `hello.controller.ts` — GET /api/hello → HelloService → DTO
+6. `hello.module.ts` — wiring
+7. `app.module.ts` — register HelloModule
+
+Подтверждаете?
+
+1. Да, реализовать
+2. Скорректировать план
+```
+
+```
+👤 User: 1
+```
+
+```
+🤖 Backend Developer:
+
+## Implementation Complete
+
+### Key files:
+
+**hello.service.ts** (core/application)
+```typescript
+@Injectable()
+export class HelloService implements GetGreetingUseCase {
+  execute(): GreetingResponseDto {
+    return { message: 'Hello, World!' };
   }
-
-  taskflow = softwareSystem "TaskFlow" {
-    description "Task management application"
-
-    spa = container "Web SPA" {
-      description "Single-page application"
-      technology "React, TypeScript"
-    }
-
-    api = container "Backend API" {
-      description "REST API server"
-      technology "NestJS, TypeScript"
-    }
-
-    db = database "Database" {
-      description "Task persistence"
-      technology "PostgreSQL"
-    }
-  }
-
-  user -> taskflow.spa "Uses" { style sync }
-  taskflow.spa -> taskflow.api "REST API calls" { style sync }
-  taskflow.api -> taskflow.db "Reads/Writes" { style sync }
 }
 ```
 
-```bash
-# Запуск LikeC4 dev server
-cd docs/architecture/c4 && npx likec4 serve
+**hello.controller.ts** (interfaces/http)
+```typescript
+@Controller('api')
+export class HelloController {
+  constructor(
+    @Inject('GetGreetingUseCase')
+    private readonly getGreeting: GetGreetingUseCase,
+  ) {}
+
+  @Get('hello')
+  getHello(): GreetingResponseDto {
+    return this.getGreeting.execute();
+  }
+}
 ```
 
-### 2.5 Вторая итерация (`sa-iterate`)
-
-```
-User: /add-ai:sa-iterate
-
-SA: Запускаю итерацию ITER-02.
-    Цель: детализация Backend API до component level.
-    Фокус: QA-001 (пагинация), QA-005 (модифицируемость).
-
-    Результат декомпозиции:
-    Backend API →
-    ├── Task Module (domain + application + infrastructure)
-    ├── Health Module
-    └── Shared (pagination, error handling)
-
-    Архитектурные решения:
-    → ADR-0002: Repository pattern для абстракции persistence
-    → DD-001: Pagination strategy (cursor-based)
+**hello.module.ts** (modules)
+```typescript
+@Module({
+  providers: [
+    { provide: 'GetGreetingUseCase', useClass: HelloService },
+  ],
+  controllers: [HelloController],
+})
+export class HelloModule {}
 ```
 
-### 2.6 Design Kanban (`sa-kanban`)
+// ADR-0001: Separate frontend/backend
+// DD-001: Hexagonal architecture — core has no framework deps
 
-```
-User: /add-ai:sa-kanban
-
-SA: Обновляю kanban доску.
-
-    Design Kanban Board
-    ┌──────────────┬──────────────────┬───────────────────┐
-    │ Not Addressed│ Partially Addr.  │ Completely Addr.  │
-    ├──────────────┼──────────────────┼───────────────────┤
-    │              │ QA-001 Perf      │ QA-002 Reliability│
-    │              │ QA-005 Modif     │ QA-003 Interop    │
-    │              │                  │ QA-004 Error hand.│
-    └──────────────┴──────────────────┴───────────────────┘
-
-    QA-001: pagination designed (ITER-02), index needed → Partially
-    QA-005: hexagonal + repository pattern → Partially
+Что дальше?
+1. `/add-ai:test-unit` — unit-тесты для HelloService
+2. `/add-ai:test-integration` — интеграционные тесты для API
+3. `/add-ai:review-code` — проверить код vs ADR
 ```
 
-### 2.7 Ревью архитектуры (`sa-review`)
-
-```
-User: /add-ai:sa-review
-
-SA: Провожу ревью архитектуры TaskFlow.
-
-    ✅ Strengths:
-    • Clear separation: SPA / API / DB
-    • Hexagonal architecture supports QA-005 (modifiability)
-    • Repository pattern enables testing and DB switching
-
-    ⚠️ Risks:
-    • QA-001: No caching strategy — may need Redis for large lists
-    • QA-005: No event bus — adding async features later will be harder
-
-    📊 QA Coverage: 3/5 fully addressed, 2/5 partially
-
-    Рекомендации:
-    1) Добавить DB индексы для QA-001 в ITER-03
-    2) Рассмотреть in-memory cache для hot data
-    3) Задокументировать решение о событийной модели в ADR-0003
-```
-
----
-
-## Фаза 3: Project Manager
-
-> 3 скилла | Роль: планирование и трекинг задач
-
-PM переводит архитектурные решения в рабочие задачи. Работает с GitHub, GitLab и Bitbucket (определяет платформу автоматически).
-
-| # | Команда | Что делаем | Артефакт |
-|---|---------|-----------|----------|
-| 1 | `/add-ai:pm-plan` | Спринт-планирование: ADR → epic → stories → tasks | Epic + issues |
-| 2 | `/add-ai:pm-issue` | Создаём конкретный issue для Task CRUD | Issue с лейблами |
-| 3 | `/add-ai:pm-status` | Статус-отчёт: прогресс, блокеры, следующие шаги | Отчёт в консоли |
-
-### 3.1 Спринт-планирование (`pm-plan`)
-
-```
-User: /add-ai:pm-plan
-
-PM: Анализирую архитектурные артефакты...
-    Обнаружены: 5 UC, 5 QA, 2 ADR, 2 ITER.
-
-    Предлагаю структуру спринта:
-
-    Epic: TaskFlow MVP
-    ├── Story: Task CRUD API (role:dev, priority:high)
-    │   ├── Task: Scaffold task module
-    │   ├── Task: Implement create/read/update/delete
-    │   └── Task: Add validation and error handling
-    ├── Story: Task Web UI (role:fe, priority:high)
-    │   ├── Task: Scaffold pages and routes
-    │   ├── Task: Create TaskCard component
-    │   └── Task: Integrate API layer
-    ├── Story: Infrastructure (role:ops, priority:medium)
-    │   ├── Task: Docker configuration
-    │   └── Task: CI/CD pipeline
-    └── Story: Testing (role:test, priority:high)
-        ├── Task: Unit tests for domain
-        └── Task: E2E tests for user flows
-
-    Создать issues в GitHub?
-    1) Да, все сразу
-    2) Только Epic + Stories
-    3) Скорректировать план
-```
-
-### 3.2 Управление issues (`pm-issue`)
-
-```
-User: /add-ai:pm-issue
-
-PM: Что нужно сделать?
-
-User: Создай story для Task CRUD API.
-
-PM: Создаю issue в GitHub...
-
-    ✅ Created: #1 "Task CRUD API"
-    Labels: type:story, role:dev, priority:high
-    Body:
-      ## Description
-      Implement CRUD operations for Task entity.
-      Related: UC-001, UC-002, UC-005, ADR-0001
-
-      ## Acceptance Criteria
-      - [ ] POST /api/tasks creates a task
-      - [ ] GET /api/tasks returns paginated list
-      - [ ] GET /api/tasks/:id returns single task
-      - [ ] PATCH /api/tasks/:id updates task
-      - [ ] DELETE /api/tasks/:id deletes task
-      - [ ] Input validation with error messages
-```
-
-### 3.3 Статус-отчёт (`pm-status`)
-
-```
-User: /add-ai:pm-status
-
-PM: 📊 TaskFlow Status Report
-
-    Sprint: MVP (Week 1)
-
-    Progress:
-    ████████░░░░░░░░ 30%
-
-    By Status:
-    • Done:        3/12 issues
-    • In Progress: 2/12 issues
-    • Backlog:     7/12 issues
-
-    By Role:
-    • dev:  2/5 done
-    • fe:   0/3 done
-    • ops:  1/2 done
-    • test: 0/2 done
-
-    🚧 Blockers:
-    • None
-
-    📌 Next Steps:
-    1. Complete Task CRUD implementation (#1)
-    2. Start frontend scaffold (#4)
-    3. Set up CI pipeline (#8)
-```
-
----
-
-## Фаза 4: Backend Developer
-
-> 2 скилла | Роль: реализация серверной части
-
-Backend-разработчик создаёт модули с гексагональной архитектурой. Адаптируется к фреймворку проекта (NestJS, Express, Fastify и др.).
-
-| # | Команда | Что делаем | Артефакт |
-|---|---------|-----------|----------|
-| 1 | `/add-ai:dev-scaffold` | Scaffold модуля Task с гексагональной архитектурой | Структура модуля |
-| 2 | `/add-ai:dev-implement` | Реализация UC-001: создание задачи | Рабочий код |
-
-### 4.1 Scaffold модуля (`dev-scaffold`)
-
-```
-User: /add-ai:dev-scaffold
-
-Dev: Какой модуль создать? Обнаружен NestJS проект.
-
-User: Task module согласно ADR-0001.
-
-Dev: Создаю модуль с гексагональной структурой...
-```
-
-Результат:
+### Что создано
 
 ```
 src/
 ├── core/
-│   ├── domain/
-│   │   ├── entities/task.entity.ts
-│   │   ├── value-objects/task-status.vo.ts
-│   │   └── domain-events/task-created.event.ts
-│   └── application/
-│       ├── ports/
-│       │   ├── inbound/create-task.port.ts
-│       │   └── outbound/task-repository.port.ts
-│       └── services/create-task.service.ts
-├── infrastructure/
-│   └── persistence/task.repository.ts
-├── interfaces/
-│   ├── http/task.controller.ts
-│   └── dto/create-task.dto.ts
-└── modules/task.module.ts
-```
-
-Каждый слой изолирован: domain не зависит ни от чего, application зависит только от domain, infrastructure реализует порты.
-
-### 4.2 Реализация фичи (`dev-implement`)
-
-```
-User: /add-ai:dev-implement
-
-Dev: Какой use case реализовать?
-
-User: UC-001: Create Task.
-
-Dev: Реализую по слоям: domain → application → infrastructure → interfaces.
-```
-
-Пример сгенерированного кода:
-
-```typescript
-// core/domain/entities/task.entity.ts
-export class Task {
-  constructor(
-    public readonly id: string,
-    public title: string,
-    public description: string,
-    public status: TaskStatus,
-    public readonly createdAt: Date,
-    public updatedAt: Date,
-  ) {}
-
-  static create(title: string, description: string): Task {
-    return new Task(
-      randomUUID(),
-      title,
-      description,
-      TaskStatus.TODO,
-      new Date(),
-      new Date(),
-    );
-  }
-}
-
-// core/application/services/create-task.service.ts
-@Injectable()
-export class CreateTaskService implements CreateTaskPort {
-  constructor(
-    @Inject(TASK_REPOSITORY) private readonly taskRepo: TaskRepositoryPort,
-  ) {}
-
-  async execute(command: CreateTaskCommand): Promise<Task> {
-    const task = Task.create(command.title, command.description);
-    return this.taskRepo.save(task);
-  }
-}
+│   ├── domain/hello/
+│   │   ├── hello.entity.ts
+│   │   └── hello.repository.port.ts
+│   └── application/hello/
+│       ├── ports/inbound/
+│       │   └── hello.use-cases.ts
+│       ├── services/
+│       │   └── hello.service.ts
+│       └── dto/
+│           └── hello.dto.ts
+├── interfaces/http/hello/
+│   ├── hello.controller.ts
+│   └── hello.response.ts
+└── modules/hello/
+    └── hello.module.ts
 ```
 
 ---
 
-## Фаза 5: Frontend Developer
+## Шаг 10: Frontend
 
-> 3 скилла | Роль: реализация клиентской части
+Три скилла: `fe-scaffold` создаёт страницу, `fe-component` — UI-компонент, `fe-api` — типизированный API-слой.
 
-Frontend-разработчик создаёт страницы, компоненты и API-слой. Адаптируется к фреймворку (React, Vue, Angular, Svelte и др.).
+### 10a: Scaffold
 
-| # | Команда | Что делаем | Артефакт |
-|---|---------|-----------|----------|
-| 1 | `/add-ai:fe-scaffold` | Scaffold страниц: TaskList, TaskDetail | Страницы, роуты, layouts |
-| 2 | `/add-ai:fe-component` | Компонент TaskCard с типизацией и a11y | `TaskCard.tsx` + тест |
-| 3 | `/add-ai:fe-api` | Типизированный API слой (TanStack Query + axios) | `api/tasks.ts`, `hooks/useTasks.ts` |
-
-### 5.1 Scaffold страниц (`fe-scaffold`)
+**Команда:** `/add-ai:fe-scaffold hello`
 
 ```
-User: /add-ai:fe-scaffold
+🤖 Frontend Developer:
 
-FE: Обнаружен React + React Router проект.
-    Какие страницы создать?
+Определяю проект...
+- Framework: Next.js (App Router) — из CON-002 + package.json
+- Styling: Tailwind CSS (из tailwind.config.js)
 
-User: TaskList (главная) и TaskDetail (просмотр/редактирование).
-
-FE: Создаю scaffold...
-```
-
-Результат:
+Scaffold страницы "hello":
 
 ```
-src/
-├── pages/
-│   ├── TaskListPage/
-│   │   ├── TaskListPage.tsx
-│   │   └── index.ts
-│   └── TaskDetailPage/
-│       ├── TaskDetailPage.tsx
-│       └── index.ts
-├── layouts/
-│   └── MainLayout.tsx
-└── routes.tsx           # Updated with new routes
+app/
+  page.tsx           # Home page — displays greeting
+  loading.tsx        # Loading state
+  error.tsx          # Error boundary
 ```
 
-### 5.2 UI компонент (`fe-component`)
-
-```
-User: /add-ai:fe-component
-
-FE: Какой компонент создать?
-
-User: TaskCard — карточка задачи с кнопками Complete и Delete.
+1. Создать файлы
+2. Добавить layout.tsx
+3. Скорректировать
 ```
 
-Результат:
+```
+👤 User: 1
+```
 
+### 10b: Component
+
+**Команда:** `/add-ai:fe-component Greeting`
+
+```
+🤖 Frontend Developer:
+
+Определяю конвенции...
+- Framework: React (Next.js)
+- Styling: Tailwind CSS
+- Component dir: src/components/
+
+Подход к реализации:
+1. Implementation First — компонент → тесты (по умолчанию)
+2. TDD — тесты → компонент → рефакторинг
+```
+
+```
+👤 User: 1
+```
+
+```
+🤖 Frontend Developer:
+
+## Greeting Component
+
+**src/components/greeting/Greeting.tsx**
 ```tsx
-// components/TaskCard/TaskCard.tsx
-interface TaskCardProps {
-  task: Task;
-  onComplete: (id: string) => void;
-  onDelete: (id: string) => void;
+interface GreetingProps {
+  message: string;
 }
 
-export const TaskCard: React.FC<TaskCardProps> = ({
-  task,
-  onComplete,
-  onDelete,
-}) => (
-  <article role="article" aria-label={`Task: ${task.title}`}>
-    <h3>{task.title}</h3>
-    <p>{task.description}</p>
-    <span className="badge" data-status={task.status}>
-      {task.status}
-    </span>
-    <div role="group" aria-label="Task actions">
-      <button
-        onClick={() => onComplete(task.id)}
-        aria-label="Complete task"
-        disabled={task.status === 'done'}
-      >
-        Complete
-      </button>
-      <button
-        onClick={() => onDelete(task.id)}
-        aria-label="Delete task"
-      >
-        Delete
-      </button>
-    </div>
-  </article>
-);
+export function Greeting({ message }: GreetingProps) {
+  return (
+    <main role="main" className="flex min-h-screen items-center justify-center">
+      <h1 className="text-4xl font-bold">{message}</h1>
+    </main>
+  );
+}
 ```
 
-### 5.3 Типизированный API слой (`fe-api`)
+TypeScript props, semantic HTML, ARIA role, Tailwind styling.
 
-```
-User: /add-ai:fe-api
-
-FE: Обнаружен axios + TanStack Query. Для какой сущности создать API?
-
-User: Tasks — все CRUD операции.
+1. Сохранить
+2. Добавить варианты (loading/error states)
+3. Скорректировать
 ```
 
-Результат:
+```
+👤 User: 1
+```
 
+### 10c: API Layer
+
+**Команда:** `/add-ai:fe-api hello`
+
+```
+🤖 Frontend Developer:
+
+Определяю паттерны...
+- Data fetching: fetch (Next.js built-in)
+- API style: REST
+- Existing API layer: нет
+
+Подход к реализации:
+1. Implementation First — API layer → тесты (по умолчанию)
+2. TDD — тесты → API layer → рефакторинг
+```
+
+```
+👤 User: 1
+```
+
+```
+🤖 Frontend Developer:
+
+## API Layer Generated
+
+**src/api/hello.ts** — API client
 ```typescript
-// api/tasks.ts
-const TASKS_URL = '/api/tasks';
-
-export const tasksApi = {
-  getAll: (params?: TaskFilterParams) =>
-    axios.get<PaginatedResponse<Task>>(TASKS_URL, { params }),
-  getById: (id: string) =>
-    axios.get<Task>(`${TASKS_URL}/${id}`),
-  create: (data: CreateTaskDto) =>
-    axios.post<Task>(TASKS_URL, data),
-  update: (id: string, data: UpdateTaskDto) =>
-    axios.patch<Task>(`${TASKS_URL}/${id}`, data),
-  delete: (id: string) =>
-    axios.delete(`${TASKS_URL}/${id}`),
-};
-
-// hooks/useTasks.ts
-export function useTasks(params?: TaskFilterParams) {
-  return useQuery({
-    queryKey: ['tasks', params],
-    queryFn: () => tasksApi.getAll(params).then(r => r.data),
-  });
+export interface GreetingResponse {
+  message: string;
 }
 
-export function useCreateTask() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: tasksApi.create,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tasks'] }),
-  });
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
+
+export async function fetchGreeting(): Promise<GreetingResponse> {
+  const res = await fetch(`${API_BASE}/api/hello`);
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
 }
+```
+
+**app/page.tsx** — updated to use API
+```tsx
+import { fetchGreeting } from '@/api/hello';
+import { Greeting } from '@/components/greeting/Greeting';
+
+export default async function HomePage() {
+  const data = await fetchGreeting();
+  return <Greeting message={data.message} />;
+}
+```
+
+Что дальше?
+1. `/add-ai:test-unit` — тесты для Greeting компонента
+2. `/add-ai:ops-docker` — Docker configuration
+3. `/add-ai:review-code` — проверить код
+```
+
+### Что создано
+
+```
+app/
+├── page.tsx              # Home page (uses API + Greeting)
+├── loading.tsx           # Loading state
+└── error.tsx             # Error boundary
+
+src/
+├── components/greeting/
+│   └── Greeting.tsx      # Greeting component
+├── api/
+│   └── hello.ts          # API client (fetchGreeting)
+└── types/
+    └── hello.types.ts    # GreetingResponse type
 ```
 
 ---
 
-## Фаза 6: DevOps Engineer
+## Шаг 11: Инфраструктура
 
-> 3 скилла | Роль: инфраструктура и CI/CD
+`ops-docker` генерирует Dockerfile и docker-compose, `ops-pipeline` — CI/CD workflow для GitHub Actions.
 
-DevOps инженер настраивает контейнеризацию, CI/CD пайплайн и конфигурацию деплоя. Адаптируется к платформе (GitHub Actions, GitLab CI, Bitbucket Pipelines).
+### 11a: Docker
 
-| # | Команда | Что делаем | Артефакт |
-|---|---------|-----------|----------|
-| 1 | `/add-ai:ops-docker` | Multi-stage Dockerfile + docker-compose | `Dockerfile`, `docker-compose.yml` |
-| 2 | `/add-ai:ops-pipeline` | GitHub Actions: lint → test → build → deploy | `.github/workflows/ci.yml` |
-| 3 | `/add-ai:ops-deploy` | Конфигурация деплоя | `deploy/` с манифестами |
-
-### 6.1 Docker конфигурация (`ops-docker`)
+**Команда:** `/add-ai:ops-docker`
 
 ```
-User: /add-ai:ops-docker
+🤖 DevOps Engineer:
 
-Ops: Обнаружен NestJS проект. Создаю Docker конфигурацию...
+Анализирую проект...
+- Backend: Node.js (NestJS) — порт 3001
+- Frontend: Node.js (Next.js) — порт 3000
+- Package manager: npm (lock file detected)
+
+Target environment?
+1. Development (hot reload, volumes)
+2. Production (multi-stage, optimized)
+3. Both (development + production configs)
 ```
 
-Результат:
-
-```dockerfile
-# Dockerfile — Multi-stage build
-FROM node:20-alpine AS builder
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npm run build
-
-FROM node:20-alpine AS runner
-RUN addgroup -g 1001 -S app && adduser -S app -u 1001
-WORKDIR /app
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
-USER app
-HEALTHCHECK CMD wget -qO- http://localhost:3000/health || exit 1
-EXPOSE 3000
-CMD ["node", "dist/main.js"]
+```
+👤 User: 3
 ```
 
+```
+🤖 DevOps Engineer:
+
+## Docker Configuration
+
+### Dockerfile.backend (multi-stage)
+- Stage 1: build (npm ci + npm run build)
+- Stage 2: production (node:20-alpine, non-root user, health check)
+
+### Dockerfile.frontend (multi-stage)
+- Stage 1: build (npm ci + npm run build)
+- Stage 2: production (node:20-alpine, Next.js standalone)
+
+### docker-compose.yml
 ```yaml
-# docker-compose.yml
 services:
-  api:
-    build: .
-    ports:
-      - "3000:3000"
-    environment:
-      DATABASE_URL: postgresql://taskflow:secret@db:5432/taskflow
-    depends_on:
-      db:
-        condition: service_healthy
-
-  db:
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_DB: taskflow
-      POSTGRES_USER: taskflow
-      POSTGRES_PASSWORD: secret
-    volumes:
-      - pgdata:/var/lib/postgresql/data
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports: ["3001:3001"]
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U taskflow"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3001/api/hello"]
 
-volumes:
-  pgdata:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports: ["3000:3000"]
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:3001
+    depends_on:
+      backend:
+        condition: service_healthy
 ```
 
-### 6.2 CI/CD Pipeline (`ops-pipeline`)
+### docker-compose.dev.yml
+- Volume mounts for hot reload
+- Node debug ports
+
+### .dockerignore
+- node_modules, .git, dist, .next, *.md
+
+Что дальше?
+1. `/add-ai:ops-pipeline` — CI/CD pipeline
+2. `/add-ai:ops-deploy` — deployment configuration
+3. Скорректировать Docker config
+```
 
 ```
-User: /add-ai:ops-pipeline
-
-Ops: Обнаружен GitHub. Создаю GitHub Actions pipeline...
+👤 User: 1
 ```
 
-Результат: `.github/workflows/ci.yml` с этапами:
+### 11b: CI Pipeline
 
+**Команда:** `/add-ai:ops-pipeline`
+
+```
+🤖 DevOps Engineer:
+
+Определяю платформу...
+- CI/CD: GitHub Actions (из git remote)
+- Test runner: Jest (из package.json)
+- Linter: ESLint
+
+Предлагаю pipeline stages:
+
+1. Install → 2. Lint → 3. Type Check → 4. Unit Tests →
+5. Build → 6. Integration Tests
+
+1. Создать pipeline с этими stages
+2. Добавить deploy stage
+3. Скорректировать stages
+```
+
+```
+👤 User: 1
+```
+
+```
+🤖 DevOps Engineer:
+
+## CI Pipeline Created
+
+**.github/workflows/ci.yml**
 ```yaml
-# .github/workflows/ci.yml
 name: CI
 on:
   push:
@@ -907,514 +1391,565 @@ on:
     branches: [main]
 
 jobs:
-  lint:
+  ci:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 20 }
+        with:
+          node-version: 20
+          cache: npm
+
       - run: npm ci
       - run: npm run lint
-
-  test:
-    needs: lint
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_DB: taskflow_test
-          POSTGRES_USER: test
-          POSTGRES_PASSWORD: test
-        ports: ["5432:5432"]
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 5s
-          --health-timeout 3s
-          --health-retries 5
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: 20 }
-      - run: npm ci
+      - run: npm run type-check
       - run: npm test
-      - run: npm run test:e2e
-
-  build:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: docker/build-push-action@v5
-        with:
-          push: false
-          tags: taskflow:${{ github.sha }}
+      - run: npm run build
+      - run: npm run test:integration
 ```
 
-### 6.3 Конфигурация деплоя (`ops-deploy`)
-
-```
-User: /add-ai:ops-deploy
-
-Ops: Куда планируете деплоить?
-
-User: Kubernetes.
-
-Ops: Создаю K8s манифесты в deploy/...
+Что дальше?
+1. `/add-ai:test-unit` — написать тесты до первого CI run
+2. `/add-ai:ops-deploy` — deployment config
+3. `/add-ai:review-code` — проверить инфраструктуру
 ```
 
-Результат:
+### Что создано
 
 ```
-deploy/
-├── namespace.yml
-├── deployment.yml       # API deployment + readiness/liveness probes
-├── service.yml          # ClusterIP service
-├── ingress.yml          # Ingress with TLS
-├── configmap.yml        # Non-secret config
-├── secret.yml           # DB credentials (template)
-└── postgres/
-    ├── statefulset.yml  # PostgreSQL StatefulSet
-    └── service.yml      # PostgreSQL service
+Dockerfile.backend             # Multi-stage NestJS build
+Dockerfile.frontend            # Multi-stage Next.js build
+docker-compose.yml             # Production compose
+docker-compose.dev.yml         # Development compose (hot reload)
+.dockerignore                  # Exclude node_modules, .git, etc.
+.github/workflows/ci.yml      # GitHub Actions CI pipeline
 ```
 
 ---
 
-## Фаза 7: Tester
+## Шаг 12: Тестирование
 
-> 4 скилла | Роль: тестирование на всех уровнях
+`test-unit` генерирует unit-тесты (AAA pattern), `test-integration` — интеграционные тесты для API endpoints.
 
-Тестировщик создаёт тесты от юнитов до BDD-сценариев. Адаптируется к тестовому фреймворку проекта (Jest, Vitest, Mocha, Playwright, Cypress и др.).
+### 12a: Unit Tests
 
-| # | Команда | Что делаем | Артефакт |
-|---|---------|-----------|----------|
-| 1 | `/add-ai:test-unit` | Юнит-тесты: Task entity, CreateTaskService | `*.spec.ts` файлы |
-| 2 | `/add-ai:test-integration` | Интеграционные тесты API (supertest + тестовая БД) | `test/integration/*.spec.ts` |
-| 3 | `/add-ai:test-e2e` | E2E тесты из UC-001 (Playwright) | `e2e/tasks.spec.ts` |
-| 4 | `/add-ai:test-bdd` | BDD сценарии (Gherkin + step definitions) | `features/*.feature` |
-
-### 7.1 Юнит-тесты (`test-unit`)
+**Команда:** `/add-ai:test-unit hello`
 
 ```
-User: /add-ai:test-unit
+🤖 Tester:
 
-Test: Что тестируем?
+Определяю test framework...
+- Runner: Jest (из package.json)
+- Pattern: *.spec.ts (co-located)
 
-User: Task entity и CreateTaskService.
+Анализирую модуль hello...
 
-Test: Создаю юнит-тесты с Jest (обнаружен в проекте)...
+Идентифицированные тест-кейсы:
+1. HelloService.execute() — returns greeting message
+2. HelloService.execute() — returns correct DTO shape
+3. HelloController — calls use case and returns result
+4. HelloController — endpoint responds with 200
+
+Генерирую unit-тесты (AAA pattern)?
+
+1. Да, все 4 кейса
+2. Выбрать подмножество
+3. Добавить edge cases
 ```
 
-Результат:
+```
+👤 User: 1
+```
 
+```
+🤖 Tester:
+
+## Unit Tests Generated
+
+**src/core/application/hello/services/hello.service.spec.ts**
 ```typescript
-// core/domain/entities/task.entity.spec.ts
-describe('Task', () => {
-  describe('create', () => {
-    it('should create task with TODO status', () => {
-      const task = Task.create('Buy groceries', 'Milk, eggs, bread');
-
-      expect(task.title).toBe('Buy groceries');
-      expect(task.description).toBe('Milk, eggs, bread');
-      expect(task.status).toBe(TaskStatus.TODO);
-      expect(task.id).toBeDefined();
-      expect(task.createdAt).toBeInstanceOf(Date);
-    });
-  });
-});
-
-// core/application/services/create-task.service.spec.ts
-describe('CreateTaskService', () => {
-  let service: CreateTaskService;
-  let mockRepo: jest.Mocked<TaskRepositoryPort>;
+describe('HelloService', () => {
+  let service: HelloService;
 
   beforeEach(() => {
-    mockRepo = { save: jest.fn(), findById: jest.fn(), findAll: jest.fn() };
-    service = new CreateTaskService(mockRepo);
+    service = new HelloService();
   });
 
-  it('should create and persist a task', async () => {
-    mockRepo.save.mockImplementation(async (task) => task);
+  it('should return greeting message', () => {
+    // Arrange — service created in beforeEach
+    // Act
+    const result = service.execute();
+    // Assert
+    expect(result.message).toBe('Hello, World!');
+  });
 
-    const result = await service.execute({
-      title: 'Test task',
-      description: 'Description',
-    });
-
-    expect(result.title).toBe('Test task');
-    expect(result.status).toBe(TaskStatus.TODO);
-    expect(mockRepo.save).toHaveBeenCalledTimes(1);
+  it('should return GreetingResponseDto shape', () => {
+    // Arrange & Act
+    const result = service.execute();
+    // Assert
+    expect(result).toHaveProperty('message');
+    expect(typeof result.message).toBe('string');
   });
 });
 ```
 
-### 7.2 Интеграционные тесты (`test-integration`)
-
-```
-User: /add-ai:test-integration
-
-Test: Какой API эндпоинт тестируем?
-
-User: Task CRUD — все эндпоинты.
-
-Test: Создаю интеграционные тесты с supertest и тестовой БД...
-```
-
-Результат:
-
+**src/interfaces/http/hello/hello.controller.spec.ts**
 ```typescript
-// test/integration/task.e2e-spec.ts
-describe('Task API (integration)', () => {
+describe('HelloController', () => {
+  let controller: HelloController;
+  let mockUseCase: GetGreetingUseCase;
+
+  beforeEach(() => {
+    // Arrange
+    mockUseCase = { execute: jest.fn().mockReturnValue({ message: 'Hello, World!' }) };
+    controller = new HelloController(mockUseCase);
+  });
+
+  it('should return greeting from use case', () => {
+    // Act
+    const result = controller.getHello();
+    // Assert
+    expect(result).toEqual({ message: 'Hello, World!' });
+    expect(mockUseCase.execute).toHaveBeenCalled();
+  });
+});
+```
+
+// UC-001: Display Greeting — main success scenario steps 3-4
+
+Что дальше?
+1. `/add-ai:test-integration` — интеграционные тесты для API
+2. Запустить тесты (`npm test`)
+3. Добавить тесты для frontend компонентов
+```
+
+```
+👤 User: 1
+```
+
+### 12b: Integration Tests
+
+**Команда:** `/add-ai:test-integration hello`
+
+```
+🤖 Tester:
+
+Определяю инструменты...
+- HTTP testing: supertest (из package.json)
+- Test runner: Jest
+
+Анализирую API endpoints...
+- GET /api/hello — returns { message: "Hello, World!" }
+
+Генерирую интеграционные тесты?
+
+1. Да
+2. Добавить custom scenarios
+```
+
+```
+👤 User: 1
+```
+
+```
+🤖 Tester:
+
+## Integration Tests Generated
+
+**test/integration/hello/hello.api.spec.ts**
+```typescript
+describe('GET /api/hello', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
-    const module = await Test.createTestingModule({
+    const moduleFixture = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
-    app = module.createNestApplication();
+    app = moduleFixture.createNestApplication();
     await app.init();
   });
 
-  afterAll(() => app.close());
+  afterAll(async () => {
+    await app.close();
+  });
 
-  describe('POST /api/tasks', () => {
-    it('should create a task and return 201', () => {
-      return request(app.getHttpServer())
-        .post('/api/tasks')
-        .send({ title: 'Test', description: 'Integration test' })
-        .expect(201)
-        .expect((res) => {
-          expect(res.body.id).toBeDefined();
-          expect(res.body.status).toBe('todo');
-        });
-    });
+  it('should return 200 with greeting message', async () => {
+    // Act
+    const response = await request(app.getHttpServer())
+      .get('/api/hello')
+      .expect(200);
 
-    it('should return 400 for empty title', () => {
-      return request(app.getHttpServer())
-        .post('/api/tasks')
-        .send({ title: '', description: '' })
-        .expect(400);
-    });
+    // Assert
+    expect(response.body).toEqual({ message: 'Hello, World!' });
+  });
+
+  it('should respond within 200ms (QA-001)', async () => {
+    // Arrange
+    const start = Date.now();
+    // Act
+    await request(app.getHttpServer()).get('/api/hello');
+    // Assert
+    const duration = Date.now() - start;
+    expect(duration).toBeLessThan(200);
+  });
+
+  it('should return correct content-type', async () => {
+    // Act & Assert
+    await request(app.getHttpServer())
+      .get('/api/hello')
+      .expect('Content-Type', /json/);
   });
 });
 ```
 
-### 7.3 E2E тесты (`test-e2e`)
+// QA-001: API Response Latency < 200ms — verified in test
 
-```
-User: /add-ai:test-e2e
-
-Test: Какой use case покрываем E2E тестами?
-
-User: UC-001: Create Task — через UI.
-
-Test: Создаю E2E тесты с Playwright и Page Object Model...
+Что дальше?
+1. `/add-ai:review-code` — проверить весь код vs ADR
+2. `/add-ai:review-standards` — audit структуры проекта
+3. Запустить все тесты
 ```
 
-Результат:
-
-```typescript
-// e2e/pages/TaskPage.ts
-export class TaskPage {
-  constructor(private page: Page) {}
-
-  async goto() {
-    await this.page.goto('/');
-  }
-
-  async createTask(title: string, description: string) {
-    await this.page.getByRole('button', { name: 'New Task' }).click();
-    await this.page.getByLabel('Title').fill(title);
-    await this.page.getByLabel('Description').fill(description);
-    await this.page.getByRole('button', { name: 'Save' }).click();
-  }
-
-  async getTaskTitles(): Promise<string[]> {
-    return this.page.getByRole('article').getByRole('heading').allTextContents();
-  }
-}
-
-// e2e/tasks.spec.ts
-test.describe('Task Management', () => {
-  test('should create a new task', async ({ page }) => {
-    const taskPage = new TaskPage(page);
-    await taskPage.goto();
-    await taskPage.createTask('Buy groceries', 'Milk, eggs, bread');
-
-    const titles = await taskPage.getTaskTitles();
-    expect(titles).toContain('Buy groceries');
-  });
-});
-```
-
-### 7.4 BDD сценарии (`test-bdd`)
+### Что создано
 
 ```
-User: /add-ai:test-bdd
+src/core/application/hello/services/
+└── hello.service.spec.ts              # Unit tests (AAA pattern)
 
-Test: Для какой функциональности создать BDD сценарии?
+src/interfaces/http/hello/
+└── hello.controller.spec.ts           # Controller unit tests
 
-User: Task management — создание, завершение, удаление.
-```
-
-Результат:
-
-```gherkin
-# features/task-management.feature
-Feature: Task Management
-  As a user
-  I want to manage my tasks
-  So that I can track my work
-
-  Scenario: Create a new task
-    Given I am on the task list page
-    When I click "New Task"
-    And I fill in "Title" with "Buy groceries"
-    And I fill in "Description" with "Milk, eggs, bread"
-    And I click "Save"
-    Then I should see "Buy groceries" in the task list
-    And the task status should be "todo"
-
-  Scenario: Complete a task
-    Given a task "Buy groceries" exists with status "todo"
-    When I click "Complete" on "Buy groceries"
-    Then the task "Buy groceries" should have status "done"
-
-  Scenario: Delete a task
-    Given a task "Buy groceries" exists
-    When I click "Delete" on "Buy groceries"
-    And I confirm the deletion
-    Then I should not see "Buy groceries" in the task list
+test/integration/hello/
+└── hello.api.spec.ts                  # API integration tests (supertest)
 ```
 
 ---
 
-## Фаза 8: Code Reviewer
+## Шаг 13: Код-ревью
 
-> 3 скилла | Роль: ревью кода и стандартов (read-only)
+`review-code` проверяет код против ADR и паттернов, `review-standards` проводит аудит структуры проекта.
 
-Code Reviewer анализирует код, но никогда не изменяет его — только читает и выдаёт отчёты.
+### 13a: Code Review
 
-| # | Команда | Что делаем | Артефакт |
-|---|---------|-----------|----------|
-| 1 | `/add-ai:review-code` | Ревью незакоммиченных изменений vs ADR | Отчёт с issues |
-| 2 | `/add-ai:review-standards` | Аудит структуры проекта и направления зависимостей | Отчёт с нарушениями |
-| 3 | `/add-ai:review-pr` | Ревью Pull Request по чеклисту | Approve / Request Changes |
-
-### 8.1 Ревью кода (`review-code`)
+**Команда:** `/add-ai:review-code`
 
 ```
-User: /add-ai:review-code
+🤖 Code Reviewer:
 
-Reviewer: Анализирую незакоммиченные изменения...
+Собираю код для ревью...
+- git diff: all uncommitted changes
+- ADRs: ADR-0001 (Separate Frontend/Backend)
+- Patterns: hexagonal architecture (DD-001)
 
-    📝 Code Review Report
+## Review Summary
+- Files reviewed: 15
+- Issues found: 2 (critical: 0, warning: 1, info: 1)
 
-    🔴 Critical (1):
-    • task.controller.ts:23 — Direct database access from controller
-      bypasses application layer (violates ADR-0001: hexagonal arch)
+## Issues
 
-    🟡 Warning (2):
-    • create-task.dto.ts:5 — Missing validation decorators
-      (@IsString, @IsNotEmpty) for title field
-    • task.repository.ts:18 — Raw SQL query without parameterization
-      (potential SQL injection)
+### [WARNING] src/api/hello.ts:5 — Hardcoded fallback URL
+API_BASE fallback `http://localhost:3001` is hardcoded.
+Consider documenting required env var NEXT_PUBLIC_API_URL.
+Related: ADR-0001
 
-    🔵 Info (1):
-    • task.entity.ts:12 — Consider adding updatedAt auto-update
-      in status change method
+### [INFO] src/core/application/hello/services/hello.service.ts:4 — Static greeting
+Greeting message is hardcoded in service. When CRN-001
+(Future Personalization) is addressed, this will need to
+accept parameters.
+Related: CRN-001
 
-    Summary: 1 critical, 2 warnings, 1 info
-    Recommendation: Fix critical issue before committing.
+## Architecture Compliance
+✅ Dependency direction: correct (interfaces → core ← infrastructure)
+✅ ADR-0001: frontend and backend are properly separated
+✅ DD-001: hexagonal layers respected, core has no NestJS imports
+✅ No secrets in code
+
+Что дальше?
+1. Создать issues для findings
+2. Исправить warnings
+3. Перейти к standards audit
 ```
 
-### 8.2 Аудит стандартов (`review-standards`)
-
 ```
-User: /add-ai:review-standards
-
-Reviewer: Аудит проекта по ADR-0001 и conventions...
-
-    📋 Standards Audit Report
-
-    ✅ Passing (4):
-    • Hexagonal structure: domain → application → infrastructure ✓
-    • DTOs separate from domain entities ✓
-    • Repository pattern with ports ✓
-    • Conventional commits in git log ✓
-
-    ❌ Violations (2):
-    • NAMING: TaskRepository class should be TaskTypeOrmRepository
-      (implementation should indicate adapter type)
-    • DEPENDENCY: infrastructure/persistence imports from interfaces/dto
-      (should only import from core/)
-
-    ⚠️ Suggestions (1):
-    • Add index.ts barrel exports for each layer
+👤 User: 3
 ```
 
-### 8.3 Ревью Pull Request (`review-pr`)
+### 13b: Standards Audit
+
+**Команда:** `/add-ai:review-standards`
 
 ```
-User: /add-ai:review-pr
+🤖 Code Reviewer:
 
-Reviewer: Номер PR?
+Читаю стандарты проекта...
+- ADRs: docs/architecture/adrs/
+- Architecture: docs/architecture/
+- Linter: .eslintrc.js
 
-User: #5
+## Standards Audit Report
 
-Reviewer: Загружаю PR #5 из GitHub...
+### Summary
+- Areas audited: 4
+- Compliant: 4 | Violations: 0
 
-    📝 PR Review: "Add Task CRUD API" (#5)
+### Directory Structure ✅
+- Hexagonal layers properly organized (core/domain, core/application,
+  interfaces/http, modules)
+- docs/architecture/ follows conventions
+- tests in correct locations
 
-    Checklist:
-    ✅ PR title follows convention
-    ✅ References issue (#1)
-    ✅ Tests included (12 tests, all passing)
-    ❌ Missing: migration file for new table
-    ⚠️ create-task.dto.ts: add @ApiProperty for Swagger docs
+### Naming Conventions ✅
+- Files: kebab-case (.ts)
+- Classes: PascalCase
+- Artifact IDs: UC-001, QA-001, ADR-0001, DD-001 — consistent
 
-    Verdict: Request Changes
-    Reason: Missing database migration will break deployment.
+### Dependency Direction ✅
+- core/ has no imports from interfaces/ or infrastructure/
+- Proper port/adapter pattern via DI
+
+### Configuration ✅
+- Environment variables documented
+- No hardcoded secrets
+
+### Recommendations
+- Consider adding .env.example with NEXT_PUBLIC_API_URL
+- Consider adding README.md with setup instructions
+
+Что дальше?
+1. Создать .env.example
+2. Создать issues для рекомендаций
+3. `/add-ai:nav-status` — финальный статус
 ```
+
+```
+👤 User: 3
+```
+
+### Что создано
+Ничего — Code Reviewer работает в read-only режиме. Генерирует отчёты, но не изменяет код.
 
 ---
 
-## Бонус: Navigator — статус и возобновление
+## Шаг 14: Финальный статус
 
-Скилл `nav-resume` (Navigator) сканирует все артефакты всех ролей и определяет текущую SDLC-фазу:
+Навигатор собирает cross-role метрики: kanban progress, issue statistics, artifact coverage, traceability gaps.
 
-```
-User: /add-ai:nav-resume
+**Команда:** `/add-ai:nav-status`
 
-Navigator: Сканирую артефакты проекта...
-
-    Текущее состояние TaskFlow:
-    ─────────────────────────────
-    SDLC Phase: Development
-
-    Requirements:
-    • Use cases: 5 (UC-001..UC-005)
-    • Scenarios: 1 (SC-001 task lifecycle)
-    • QA scenarios: 5 (3 addressed, 2 partially)
-    • Constraints: 2, Concerns: 2
-
-    Architecture:
-    • ADRs: 3 (all accepted)
-    • Iterations: 2 completed
-    • C4 diagrams: context, container, component
-
-    Issues by Phase:
-    • phase:requirements: 5/5 done
-    • phase:architecture: 3/3 done
-    • phase:development: 4/8 in progress
-    • phase:testing: 0/4 not started
-
-    Traceability Gaps:
-    • SC-001 has no BDD feature file yet
-    • QA-004 has no ADR
-
-    Рекомендуемые следующие шаги:
-    1) Завершить реализацию UC-003 (фильтрация задач)
-    2) Создать BDD feature из SC-001 (/add-ai:test-bdd SC-001)
-    3) Интегрировать API слой на фронтенде (/add-ai:fe-api)
-    4) Провести sa-review для оценки покрытия QA-004
-    5) Посмотреть полный статус (/add-ai:nav-status)
-```
-
-Для детального мета-статуса используйте `nav-status`:
+### Диалог
 
 ```
-User: /add-ai:nav-status
+🤖 Navigator:
 
-Navigator: Unified Project Status — 2026-03-09
+# Unified Project Status — 2026-03-12
 
-    Progress: 65% (drivers: 3/5 addressed, issues: 8/12 closed)
-    Design Kanban: 0 Not | 2 Partially | 3 Completely | 2 Implemented | 0 Verified
-    Traceability: 1 gap (SC-001 → no BDD feature)
-    Blockers: none
+## SDLC Phase
+**Development/Testing** — backend and frontend implemented, tests written,
+infrastructure configured.
 
-    Рекомендации:
-    1) Закрыть оставшиеся dev issues
-    2) Генерировать тесты из SC-001
-    3) Запланировать review фазу
+## Progress Summary
+| Metric | Value |
+|--------|-------|
+| Drivers addressed | 3/3 (100%) |
+| ADRs accepted | 1 |
+| Issues completed | 0/13 (0% — code written, issues not closed yet) |
+| Test coverage (scenarios) | 1/1 UC covered |
+
+## Design Kanban
+| Not Addressed | Partially | Completely | Implemented | Verified |
+|---------------|-----------|------------|-------------|----------|
+| 0             | 0         | 0          | 3           | 0        |
+
+## Issues by Phase
+| Phase | Open | In Progress | Done | Total |
+|-------|------|-------------|------|-------|
+| phase:requirements | 0 | 0 | 0 | 1 |
+| phase:architecture | 0 | 0 | 0 | 1 |
+| phase:development | 7 | 0 | 0 | 7 |
+| phase:testing | 2 | 0 | 0 | 2 |
+| phase:review | 0 | 0 | 0 | 2 |
+
+## Traceability
+UC-001 → QA-001 → ADR-0001 → DD-001 → code → tests ✅
+Complete traceability chain from requirement to verification.
+
+## Traceability Gaps
+- Issues not yet closed (code exists but issues are open)
+- No E2E tests (SC-NNN not created — optional for this project)
+- Kanban items in "Implemented" but not "Verified" (need test run)
+
+## Recommendations
+1. Run `npm test` and `npm run test:integration` to verify all tests pass
+2. Close completed issues on GitHub
+3. Move kanban items to "Verified" after successful test run
+4. Consider `/add-ai:ba-scenario` for SC-001 if E2E testing needed
 ```
+
+### Что создано
+Ничего — навигатор работает в read-only режиме.
 
 ---
 
-## Сводная таблица: все 32 скилла
+## Итоги
 
-| # | Роль | Скилл | Фаза | Что делает |
-|---|------|-------|------|-----------|
-| 1 | Nav | `nav-resume` | * | Возобновление сессии (сканирование всех артефактов) |
-| 2 | Nav | `nav-status` | * | Мета-статус проекта (kanban + issues + traceability) |
-| 3 | BA | `ba-requirements` | 2 | Выявление требований (интерактивная сессия) |
-| 4 | BA | `ba-qaw` | 2 | Quality Attribute Workshop |
-| 5 | BA | `ba-utility-tree` | 2 | Дерево утилитарности (приоритизация QA) |
-| 6 | BA | `ba-usecase` | 2 | Документирование use case'ов (UC-NNN) |
-| 7 | BA | `ba-scenario` | 2 | Scenario Workshop (SC-NNN из UC + QA) |
-| 8 | SA | `sa-init` | 3 | Инициализация `docs/architecture/` |
-| 9 | SA | `sa-iterate` | 3 | Итерация ADD 3.0 (7-step process) |
-| 10 | SA | `sa-adr` | 3 | Architecture Decision Record (MADR v3) |
-| 11 | SA | `sa-diagram` | 3 | C4 диаграммы (LikeC4 DSL) |
-| 12 | SA | `sa-kanban` | 3 | Design kanban board |
-| 13 | SA | `sa-review` | 3 | Ревью архитектуры vs QA |
-| 14 | PM | `pm-init` | 1 | Инициализация трекинга (labels, milestone, stories) |
-| 15 | PM | `pm-plan` | 4 | Спринт-планирование (ADR → issues) |
-| 16 | PM | `pm-issue` | * | Управление issues (GitHub/GitLab/Bitbucket) |
-| 17 | PM | `pm-status` | * | Статус-отчёт проекта |
-| 18 | Dev | `dev-scaffold` | 5 | Scaffold бэкенд-модуля (hexagonal) |
-| 19 | Dev | `dev-implement` | 5 | Реализация use case'а (+ TDD mode) |
-| 20 | FE | `fe-scaffold` | 5 | Scaffold страниц и роутов |
-| 21 | FE | `fe-component` | 5 | UI компонент (typed props, a11y, + TDD mode) |
-| 22 | FE | `fe-api` | 5 | Типизированный API слой (+ TDD mode) |
-| 23 | Ops | `ops-docker` | 5 | Docker конфигурация (multi-stage) |
-| 24 | Ops | `ops-pipeline` | 5 | CI/CD pipeline (platform-adaptive) |
-| 25 | Ops | `ops-deploy` | 5 | Конфигурация деплоя (K8s, Fly.io и др.) |
-| 26 | Test | `test-unit` | 6 | Юнит-тесты (domain, services) |
-| 27 | Test | `test-integration` | 6 | Интеграционные тесты (API + DB) |
-| 28 | Test | `test-e2e` | 6 | E2E тесты из SC-NNN (Playwright, Page Objects) |
-| 29 | Test | `test-bdd` | 6 | BDD сценарии из SC-NNN (Gherkin + steps) |
-| 30 | Review | `review-code` | 7 | Ревью кода vs ADR и паттерны |
-| 31 | Review | `review-standards` | 7 | Аудит стандартов проекта |
-| 32 | Review | `review-pr` | 7 | Ревью Pull Request |
+### Полное дерево созданных файлов
+
+```
+hello-world/
+├── docs/
+│   ├── architecture/
+│   │   ├── README.md                                # Project context
+│   │   ├── utility-tree.md                          # QA priorities
+│   │   ├── kanban.md                                # Design progress
+│   │   ├── c4/
+│   │   │   ├── package.json
+│   │   │   └── src/
+│   │   │       ├── specification.c4
+│   │   │       ├── model.c4                         # HelloBackend + HelloFrontend
+│   │   │       ├── views.c4                         # Container + component views
+│   │   │       └── deployment.c4
+│   │   ├── adrs/
+│   │   │   ├── 0000-template.md
+│   │   │   └── 0001-separate-frontend-backend.md    # ADR-0001
+│   │   ├── drivers/
+│   │   │   ├── use-cases/
+│   │   │   │   └── UC-001.md
+│   │   │   ├── quality-attributes/
+│   │   │   │   └── QA-001.md
+│   │   │   ├── constraints/
+│   │   │   │   ├── CON-001.md                       # NestJS Backend
+│   │   │   │   └── CON-002.md                       # Next.js Frontend
+│   │   │   └── concerns/
+│   │   │       └── CRN-001.md                       # Future Personalization
+│   │   ├── decisions/
+│   │   │   ├── DD-000-template.md
+│   │   │   └── DD-001-hexagonal-backend.md
+│   │   ├── views/
+│   │   │   └── hello-backend-ert.md                 # Element Responsibility Table
+│   │   └── iterations/
+│   │       └── ITER-01.md                           # ADD 3.0 iteration log
+│   └── requirements/
+│       ├── qaw-results.md
+│       ├── utility-tree.md
+│       └── use-cases/
+│           └── UC-001-display-greeting.md
+│
+├── src/
+│   ├── core/
+│   │   ├── domain/hello/
+│   │   │   ├── hello.entity.ts
+│   │   │   └── hello.repository.port.ts
+│   │   └── application/hello/
+│   │       ├── ports/inbound/
+│   │       │   └── hello.use-cases.ts
+│   │       ├── services/
+│   │       │   ├── hello.service.ts
+│   │       │   └── hello.service.spec.ts
+│   │       └── dto/
+│   │           └── hello.dto.ts
+│   ├── interfaces/http/hello/
+│   │   ├── hello.controller.ts
+│   │   ├── hello.controller.spec.ts
+│   │   └── hello.response.ts
+│   └── modules/hello/
+│       └── hello.module.ts
+│
+├── app/                                              # Next.js (App Router)
+│   ├── page.tsx
+│   ├── loading.tsx
+│   └── error.tsx
+│
+├── src/                                              # Frontend src
+│   ├── components/greeting/
+│   │   └── Greeting.tsx
+│   ├── api/
+│   │   └── hello.ts
+│   └── types/
+│       └── hello.types.ts
+│
+├── test/integration/hello/
+│   └── hello.api.spec.ts
+│
+├── Dockerfile.backend
+├── Dockerfile.frontend
+├── docker-compose.yml
+├── docker-compose.dev.yml
+├── .dockerignore
+└── .github/workflows/
+    └── ci.yml
+```
+
+### Трассировка артефактов
+
+| Requirement | Architecture | Code | Tests |
+|------------|--------------|------|-------|
+| UC-001: Display Greeting | ADR-0001, DD-001 | HelloService, HelloController, Greeting.tsx | hello.service.spec.ts, hello.controller.spec.ts, hello.api.spec.ts |
+| QA-001: API Latency < 200ms | ADR-0001 | HelloController (GET /api/hello) | hello.api.spec.ts (latency assertion) |
+| CON-001: NestJS Backend | ADR-0001 | src/ (hexagonal structure) | — |
+| CON-002: Next.js Frontend | ADR-0001 | app/, src/components/ | — |
+| CRN-001: Future Personalization | DD-001 (hexagonal) | Port/adapter separation | — (deferred) |
+
+### Использованные скиллы (20 из 32)
+
+| # | Скилл | Агент | Шаг |
+|---|-------|-------|-----|
+| 1 | `nav-resume` | Navigator | 1 |
+| 2 | `pm-init` | Project Manager | 2 |
+| 3 | `sa-init` | Solution Architect | 3 |
+| 4 | `ba-requirements` | Business Analyst | 4 |
+| 5 | `ba-usecase` | Business Analyst | 5 |
+| 6 | `ba-qaw` | Business Analyst | 6 |
+| 7 | `ba-utility-tree` | Business Analyst | 6 |
+| 8 | `sa-iterate` | Solution Architect | 7 |
+| 9 | `sa-adr` | Solution Architect | 7 (internally) |
+| 10 | `sa-diagram` | Solution Architect | 7 (internally) |
+| 11 | `sa-kanban` | Solution Architect | 7 (internally) |
+| 12 | `pm-plan` | Project Manager | 8 |
+| 13 | `dev-scaffold` | Backend Developer | 9 |
+| 14 | `dev-implement` | Backend Developer | 9 |
+| 15 | `fe-scaffold` | Frontend Developer | 10 |
+| 16 | `fe-component` | Frontend Developer | 10 |
+| 17 | `fe-api` | Frontend Developer | 10 |
+| 18 | `ops-docker` | DevOps Engineer | 11 |
+| 19 | `ops-pipeline` | DevOps Engineer | 11 |
+| 20 | `test-unit` | Tester | 12 |
+| 21 | `test-integration` | Tester | 12 |
+| 22 | `review-code` | Code Reviewer | 13 |
+| 23 | `review-standards` | Code Reviewer | 13 |
+| 24 | `nav-status` | Navigator | 14 |
 
 ---
 
-## Workflow: как фазы связаны между собой
+## Советы и следующие шаги
 
-```
-  Фаза 1           Фаза 2            Фаза 3
-┌──────────┐    ┌──────────────┐    ┌────────────┐
-│    BA    │───→│     SA       │───→│     PM     │
-│ требова- │    │ архитектура  │    │ planning & │
-│ ния      │    │ ADD 3.0      │    │ tracking   │
-└──────────┘    └──────────────┘    └─────┬──────┘
-                                          │
-              ┌───────────────────────────┬┴──────────────────┐
-              ▼                           ▼                    ▼
-        Фаза 4                      Фаза 5              Фаза 6
-    ┌──────────────┐           ┌──────────────┐    ┌──────────────┐
-    │  Backend Dev │           │ Frontend Dev │    │    DevOps    │
-    │  scaffold +  │           │  scaffold +  │    │  docker +   │
-    │  implement   │           │  components  │    │  CI/CD      │
-    └──────┬───────┘           └──────┬───────┘    └──────┬───────┘
-           │                          │                    │
-           └──────────────┬───────────┘                    │
-                          ▼                                │
-                    Фаза 7                                 │
-               ┌──────────────┐                            │
-               │   Tester     │                            │
-               │ unit → integ │                            │
-               │ → e2e → bdd  │                            │
-               └──────┬───────┘                            │
-                      │                                    │
-                      ▼                                    │
-                Фаза 8                                     │
-           ┌──────────────┐                                │
-           │Code Reviewer │◄───────────────────────────────┘
-           │ code, stds,  │
-           │ PR review    │
-           └──────────────┘
-```
+### Ежедневная работа
 
-> **Примечание**: Dev/FE/Ops фазы могут выполняться параллельно. Тесты могут начинаться одновременно с реализацией (TDD mode в `dev-implement`/`fe-component`/`fe-api`). Скиллы `nav-resume` и `nav-status` можно вызвать на любом этапе.
+- **Начинайте сессию с** `/add-ai:nav-resume` — навигатор покажет где вы остановились и что делать дальше
+- **TDD mode** доступен в `dev-implement`, `fe-component`, `fe-api` — выбирайте вариант 2 при старте реализации
+- **`pm-status`** — быстрая сводка по issues без полного analysis навигатора
+- **`sa-kanban`** — управление design kanban board отдельно от итераций
+
+### Скиллы не покрытые в tutorial
+
+| Скилл | Когда нужен |
+|-------|-------------|
+| `ba-scenario` | Composite flows (SC-NNN) — когда UC недостаточно и нужны cross-cutting сценарии |
+| `sa-review` | Архитектурный review vs QA-сценарии — проверить что архитектура отвечает всем QA |
+| `sa-adr` | Standalone ADR management — создание/обновление ADR вне итерации |
+| `sa-diagram` | Standalone diagram management — LikeC4 dynamic и deployment views |
+| `test-e2e` | E2E тесты (Playwright/Cypress) — из SC-NNN сценариев |
+| `test-bdd` | BDD сценарии (Gherkin) — из SC-NNN в .feature файлы |
+| `review-pr` | PR review — полный checklist для pull request |
+| `ops-deploy` | Deployment config — Kubernetes, cloud platforms |
+| `pm-issue` | CRUD для отдельных issues — создание/обновление вне sprint planning |
+| `pm-status` | Status report — лёгкая альтернатива nav-status |
+
+### Расширение проекта
+
+Хотите продолжить? Вот идеи для следующей итерации:
+
+1. **CRN-001 → ITER-02**: персонализированные приветствия — новый use case UC-002, параметр `name` в API, input field на frontend
+2. **SC-001**: composite scenario "User opens page → sees greeting → enters name → gets personalized greeting" — для E2E и BDD тестов
+3. **ops-deploy**: deployment на cloud platform (Vercel + Fly.io / Railway)
+
+Для каждого расширения процесс тот же: `ba-requirements` → `sa-iterate` → `pm-plan` → `dev/fe/ops` → `test` → `review`.
