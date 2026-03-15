@@ -53,7 +53,6 @@ complementary capabilities are available in this session:
 ### In Reports
 If complementary capabilities are detected in the session, add a brief note
 in the Recommendations section. If none are detected, do not mention them.
-See `${CLAUDE_PLUGIN_ROOT}/reference/creation-chain.md` for details.
 
 ## SDLC Phases
 ```

@@ -95,8 +95,7 @@ Templates in `reference/templates/`:
 add-ai can serve as a methodology layer in a creation chain — a sequence of
 creating systems where each creates value for the next.
 Agents may benefit from complementary capabilities (first-principles thinking,
-project knowledge retrieval) if available in the session.
-See `reference/creation-chain.md` for capability needs. Chain awareness is additive.
+project knowledge retrieval) if available in the session. Chain awareness is additive.
 
 ## Diagramming Policy
 
